@@ -8,6 +8,7 @@ import zone
 import time
 import services, glob, sims4, inspect, re
 from server_commands.interaction_commands import has_choices, generate_choices, generate_phone_choices,  select_choice, cancel_mixer_interaction, cancel_super_interaction, push_interaction
+from server_commands.clock_commands import set_speed
 from decorator import decorator
 from undecorated import undecorated
 
@@ -31,16 +32,20 @@ except Exception:
     # global time_on_startup 
     # time_on_startup = time.time()
 
+files = glob.glob("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/Mods/Heuristics/Scripts/delicious pickles/*.*")
+file_count = len(files)
+msg_count = file_count
+    
 def send_message_server(self, msg_id, msg):
     global msg_count
-    msg_count += 1
 
     if self.active:
 
         omega.send(self.id, msg_id, msg.SerializeToString())
         message = Message(msg_id, msg.SerializeToString())
         pickle.dump(message, open("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/Mods/Heuristics/Scripts/delicious pickles/{}.pkl".format(msg_count), "ab"))
-        
+        msg_count += 1
+
         
         
 def send_message_client(self, msg_id, msg):
@@ -50,12 +55,16 @@ def send_message_client(self, msg_id, msg):
 
 
 last_synced_message_for_client = 1
+files = glob.glob("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/Mods/Heuristics/Scripts/delicious pickles/*.*")
+file_count = len(files)
+last_synced_message_for_client = file_count
 def client_sync():
     global last_synced_message_for_client
     client_instance = services.client_manager().get_first_client()
 
     files = glob.glob("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/Mods/Heuristics/Scripts/delicious pickles/*.*")
     file_count = len(files)
+
     for message_no in range(last_synced_message_for_client, file_count):
         msg_data = open("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/Mods/Heuristics/Scripts/delicious pickles/{}.pkl".format(message_no), 'rb')
         unpacked_msg_data = pickle.load(msg_data)
@@ -67,19 +76,19 @@ last_synced_command_for_server = 0
 
 def parse_arg(arg):
     new_arg = arg
-    new_arg = new_arg.replace('"', "").replace("(", "").replace(")", "").replace("'", "").replace(" ", "")
-    output("arg_handler", new_arg + "\n")
-    if "PickType" in new_arg:
-        try:
-            new_arg = float(new_arg)
+    orig_arg = new_arg.replace('"', "").replace("(", "").replace(")", "").replace("'", "").replace(" ", "")
+    new_arg = orig_arg
+    try:
+        new_arg = float(orig_arg)
 
-            try: 
-                if str(int(new_arg)) == new_arg:
-                    new_arg = int(new_arg)
-            except BaseException:
-                pass 
+        try: 
+            new_arg = int(orig_arg)
         except BaseException:
             pass 
+    except BaseException:
+        pass 
+    output("arg_handler", str(new_arg) + "\n")
+
     return new_arg
 command_count = 1
 regex = re.compile('[a-zA-Z]')
@@ -90,7 +99,8 @@ command_names = ['interactions.has_choices',
                                       'interactions.select',
                                       'interactions.cancel',
                                       'interactions.cancel_si',
-                                      'interactions.push']
+                                      'interactions.push',
+                                      'clock.setspeed']
            
                                       
 functions= [has_choices,
@@ -99,7 +109,8 @@ functions= [has_choices,
                     select_choice,
                     cancel_mixer_interaction,
                     cancel_super_interaction,
-                    push_interaction]
+                    push_interaction,
+                    set_speed]
 
            
 function_names = ["has_choices",
@@ -108,7 +119,8 @@ function_names = ["has_choices",
                     "select_choice",
                     "cancel_mixer_interaction",
                     "cancel_super_interaction",
-                    "push_interaction"]
+                    "push_interaction",
+                    "set_speed"]
 
 
 def server_update():
@@ -138,7 +150,7 @@ def server_update():
             parsed_args.append(parsed_arg)
         # output('arg_handler', "{}".format(function_name))
             
-        function_to_execute = "{}({})".format(function_name, str(parsed_args).replace('"', '').replace('[', '').replace(']','').replace("'", ""))
+        function_to_execute = "{}({})".format(function_name, str(parsed_args).replace('[', '').replace(']',''))
         output('arg_handler', str(function_to_execute) + "\n" )
         exec(function_to_execute)
 
@@ -193,3 +205,5 @@ def checkid (_connection=None):
 
     for obj in list(services.object_manager().objects):
         output('obj', str(obj) + " " + str(obj.id) +"\n")
+        
+        
