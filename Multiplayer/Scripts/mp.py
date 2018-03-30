@@ -9,6 +9,7 @@ import time
 import services, glob, sims4, inspect, re
 from server_commands.interaction_commands import has_choices, generate_choices, generate_phone_choices,  select_choice, cancel_mixer_interaction, cancel_super_interaction, push_interaction
 from server_commands.clock_commands import set_speed
+from server_commands.sim_commands import set_active_sim
 from decorator import decorator
 from undecorated import undecorated
 
@@ -95,7 +96,8 @@ command_names = ['interactions.has_choices',
                                       'interactions.cancel',
                                       'interactions.cancel_si',
                                       'interactions.push',
-                                      'clock.setspeed']
+                                      'clock.setspeed',
+                                      'sims.set_active']
            
                                       
 functions= [has_choices,
@@ -105,7 +107,8 @@ functions= [has_choices,
                     cancel_mixer_interaction,
                     cancel_super_interaction,
                     push_interaction,
-                    set_speed]
+                    set_speed, 
+                    set_active_sim]
 
            
 function_names = ["has_choices",
@@ -115,7 +118,8 @@ function_names = ["has_choices",
                     "cancel_mixer_interaction",
                     "cancel_super_interaction",
                     "push_interaction",
-                    "set_speed"]
+                    "set_speed",
+                    "set_active_sim"]
 
 
 def server_update():
