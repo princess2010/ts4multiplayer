@@ -1,5 +1,0 @@
-3-27
-
-Fixed bug where reloading the script overwrote the earlier pickles
-Added clock control on the client
-Fixed bug where commands with strings couldn't be loaded correctly.
