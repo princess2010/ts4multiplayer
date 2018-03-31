@@ -13,6 +13,10 @@ from server_commands.sim_commands import set_active_sim
 from decorator import decorator
 from undecorated import undecorated
 
+
+incoming_commands = []
+outgoing_commands = []
+
 class Message:
     def __init__(self, msg_id, msg):
         self.msg_id = msg_id
@@ -36,11 +40,13 @@ test_msg_count = 0
 def send_message_server(self, msg_id, msg):
     global msg_count
     global test_msg_count
+    global outgoing_commands
     # output('id', str(self.id))
     if self.active:
             omega.send(self.id, msg_id, msg.SerializeToString())
             message = Message(msg_id, msg.SerializeToString())
-            pickle.dump(message, open("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/Mods/Heuristics/Scripts/delicious pickles/{}.pkl".format(msg_count), "ab"))
+            pickled_message = pickle.dumps(message)
+            outgoing_commands.append(pickled_message)
             msg_count += 1
          
             
@@ -178,15 +184,19 @@ def on_tick_client():
         return
     client_sync()
 
-
 def on_tick_server():
     try:
         client = services.client_manager().get_first_client()
         if client == None:
             return
+        output("outgoing_commands",  str(len(outgoing_commands)) + "\n")
     except Exception:
         return
     server_update()
+    
+    
+import multiplayer_server
+
 if is_client:
     sims4.core_services.on_tick = on_tick_client
     client.Client.send_message = send_message_client
@@ -196,6 +206,9 @@ if is_client:
 else:
     client.Client.send_message = send_message_server
     sims4.core_services.on_tick = on_tick_server
+    server_instance = multiplayer_server.Server()
+    server_instance.listen(incoming_commands)
+    server_instance.send(outgoing_commands)
 
 @sims4.commands.Command('get_con', command_type=sims4.commands.CommandType.Live)
 def get_con(_connection=None):
