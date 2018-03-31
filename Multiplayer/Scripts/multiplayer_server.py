@@ -6,9 +6,11 @@ import time
 import sys
 from networking import generic_send_loop, generic_listen_loop
 import update
+import mp
 class Server:
     def __init__(self):
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+        self.serversocket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.host = socket.gethostname()                           
         self.port = 9999                                           
         self.serversocket.bind((self.host, self.port))     
@@ -17,16 +19,15 @@ class Server:
     def listen(self, incoming_commands):
         threading.Thread(target = self.listen_loop, args = [incoming_commands]).start()
 
-    def send(self, outgoing_commands):
-        threading.Thread(target = self.send_loop, args = [outgoing_commands]).start()
+    def send(self):
+        threading.Thread(target = self.send_loop, args = []).start()
         
-    def send_loop(self, outgoing_commands):
+    def send_loop(self):
         while True:
             if self.clientsocket is not None:
-                for data in outgoing_commands:
+                for data in mp.outgoing_commands:
                     generic_send_loop(data, self.clientsocket)
-                    outgoing_commands.remove(data)
-                    time.sleep(0.1)
+                    mp.outgoing_commands.remove(data)
 
 
 
