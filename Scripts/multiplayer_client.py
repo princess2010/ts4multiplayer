@@ -5,6 +5,7 @@ import threading
 import time
 import sys
 import mp
+from update import output
 
 from networking import generic_send_loop, generic_listen_loop
 class Client:
@@ -37,4 +38,3 @@ class Client:
         while True:
             if self.connected:
                 mp.incoming_commands, data, size = generic_listen_loop(serversocket, mp.incoming_commands, data, size)
-

@@ -53,7 +53,7 @@ try:
         client_instance = services.client_manager().get_first_client()
         for unpacked_msg_data in incoming_commands:
             omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
-        incoming_commands = []
+            incoming_commands.remove(unpacked_msg_data)
     def parse_arg(arg):
         new_arg = arg
         orig_arg = new_arg.replace('"', "").replace("(", "").replace(")", "").replace("'", "").replace(" ", "")
