@@ -15,7 +15,7 @@ class Client:
         self.port = 9999       
         self.connected = False
 
-    def listen(self, incoming_commands):
+    def listen(self):
         threading.Thread(target = self.listen_loop, args = []).start()
 
     def send(self):
@@ -29,7 +29,7 @@ class Client:
             for data in mp.outgoing_commands:
                 generic_send_loop(data, self.serversocket)
                 mp.outgoing_commands.remove(data)
-    def listen_loop(self, mp.incoming_commands):
+    def listen_loop(self):
         serversocket = self.serversocket
         
         size = None 

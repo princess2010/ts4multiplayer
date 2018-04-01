@@ -16,8 +16,8 @@ class Server:
         self.serversocket.bind((self.host, self.port))     
         self.clientsocket = None
 
-    def listen(self, incoming_commands):
-        threading.Thread(target = self.listen_loop, args = [incoming_commands]).start()
+    def listen(self):
+        threading.Thread(target = self.listen_loop, args = []).start()
 
     def send(self):
         threading.Thread(target = self.send_loop, args = []).start()
@@ -31,7 +31,7 @@ class Server:
 
 
 
-    def listen_loop(self, incoming_commands):
+    def listen_loop(self):
         self.serversocket.listen(5)
         self.clientsocket,address = self.serversocket.accept()  
         clientsocket = self.clientsocket
@@ -40,5 +40,5 @@ class Server:
         data = b''
         
         while True:
-            incoming_commands, data, size = generic_listen_loop(clientsocket, incoming_commands, data, size)
+            mp.incoming_commands, data, size = generic_listen_loop(clientsocket, mp.incoming_commands, data, size)
             

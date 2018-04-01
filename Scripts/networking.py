@@ -1,7 +1,7 @@
 import sys
 import pickle
 from struct import unpack, pack
-
+from mp import Message
 def generic_send_loop(data, socket):
     data  = pickle.dumps(data)
     length = pack('>Q', sys.getsizeof(data))
