@@ -16,7 +16,9 @@ try:
     from server_commands.sim_commands import set_active_sim
     from decorator import decorator
     from undecorated import undecorated
-
+    from threading import Lock, RLock
+    outgoing_lock = Lock()
+    incoming_lock = Lock()
 
     incoming_commands = []
     outgoing_commands = []
@@ -36,12 +38,16 @@ try:
         pass
 
     def send_message_server(self, msg_id, msg):
-        global outgoing_commands
-        if self.active:
-                omega.send(self.id, msg_id, msg.SerializeToString())
-                message = Message(msg_id, msg.SerializeToString())
-                outgoing_commands.append(message)
-             
+            global outgoing_commands
+            if self.active:
+                    omega.send(self.id, msg_id, msg.SerializeToString())
+                    message = Message(msg_id, msg.SerializeToString())
+                    output("locks", "acquiring outgoing lock")
+
+                    with outgoing_lock:
+                        outgoing_commands.append(message)
+                    output("locks", "releasing outgoing lock")
+
                 
     def send_message_client(self, msg_id, msg):
         pass
@@ -49,11 +55,17 @@ try:
 
 
     def client_sync():
-        global incoming_commands
-        client_instance = services.client_manager().get_first_client()
-        for unpacked_msg_data in incoming_commands:
-            omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
-            incoming_commands.remove(unpacked_msg_data)
+        output("locks", "acquiring incoming lock 1")
+
+        with incoming_lock:
+            global incoming_commands
+            client_instance = services.client_manager().get_first_client()
+            output("receive", "{} \n".format(len(incoming_commands)))
+            for unpacked_msg_data in incoming_commands:
+                omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
+                incoming_commands.remove(unpacked_msg_data)
+        output("locks", "releasing incoming lock")
+
     def parse_arg(arg):
         new_arg = arg
         orig_arg = new_arg.replace('"', "").replace("(", "").replace(")", "").replace("'", "").replace(" ", "")
@@ -107,40 +119,48 @@ try:
 
 
     def server_update():
-        global last_synced_command_for_server
-        global command_count
-        client_instance = services.client_manager().get_first_client()
+      output("locks", "acquiring incoming lock 1")
 
-        for command in incoming_commands:
-            
-            current_line = command.split(',')
-            function_name = current_line[0]
-            if function_name == '':
-                continue
-            parsed_args = []
+      with incoming_lock:
+        
+            global last_synced_command_for_server
+            global command_count
+            client_instance = services.client_manager().get_first_client()
 
-            command_count += 1
-            for arg_index in range(1, len(current_line)):
-                arg = current_line[arg_index].replace(')', '').replace('{}', '').replace('(', '')
-                if "'" not in arg:
-                    arg = regex.sub('', arg)
-                    arg = arg.replace('<._ = ', '').replace('>', '')
-                parsed_arg = parse_arg(arg)
-                parsed_args.append(parsed_arg)
+            for command in incoming_commands:
                 
-            function_to_execute = "{}({})".format(function_name, str(parsed_args).replace('[', '').replace(']',''))
-            output('arg_handler', str(function_to_execute) + "\n" )
-            exec(function_to_execute)
-            incoming_commands.remove(command)
+                current_line = command.split(',')
+                function_name = current_line[0]
+                if function_name == '':
+                    continue
+                parsed_args = []
+
+                command_count += 1
+                for arg_index in range(1, len(current_line)):
+                    arg = current_line[arg_index].replace(')', '').replace('{}', '').replace('(', '')
+                    if "'" not in arg:
+                        arg = regex.sub('', arg)
+                        arg = arg.replace('<._ = ', '').replace('>', '')
+                    parsed_arg = parse_arg(arg)
+                    parsed_args.append(parsed_arg)
+                    
+                function_to_execute = "{}({})".format(function_name, str(parsed_args).replace('[', '').replace(']',''))
+                # output('arg_handler', str(function_to_execute) + "\n" )
+                exec(function_to_execute)
+                incoming_commands.remove(command)
+      output("locks", "releasing incoming lock")
 
 
     @decorator
     def wrapper(func, *args, **kwargs):
-        global outgoing_commands
-        outgoing_commands.append("\n" + str(func.__name__) + ", " + str(args) +  "  " + str(kwargs))
-        def do_nothing():
-            pass
-        return do_nothing
+        output("locks", "acquiring outgoing lock")
+        with outgoing_lock:
+            global outgoing_commands
+            outgoing_commands.append("\n" + str(func.__name__) + ", " + str(args) +  "  " + str(kwargs))
+            def do_nothing():
+                pass
+            return do_nothing
+        output("locks", "releasing outgoing lock")
 
 
     def on_tick_client():

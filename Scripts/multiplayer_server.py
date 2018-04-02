@@ -7,6 +7,8 @@ import sys
 from networking import generic_send_loop, generic_listen_loop
 import update
 import mp
+from update import output
+
 class Server:
     def __init__(self):
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
@@ -25,11 +27,15 @@ class Server:
     def send_loop(self):
         while True:
             if self.clientsocket is not None:
-                for data in mp.outgoing_commands:
-                    generic_send_loop(data, self.clientsocket)
-                    mp.outgoing_commands.remove(data)
+                output("locks", "acquiring outgoing lock")
 
+                with mp.outgoing_lock:
+                    for data in mp.outgoing_commands:
+                        generic_send_loop(data, self.clientsocket)
+                        mp.outgoing_commands.remove(data)
 
+                output("locks", "releasing outgoing lock")
+            # time.sleep(1)
 
     def listen_loop(self):
         self.serversocket.listen(5)
@@ -40,5 +46,7 @@ class Server:
         data = b''
         
         while True:
+
             mp.incoming_commands, data, size = generic_listen_loop(clientsocket, mp.incoming_commands, data, size)
-            
+            # time.sleep(1)
+

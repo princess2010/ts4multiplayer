@@ -25,11 +25,18 @@ class Client:
     def send_loop(self):
         self.serversocket.connect((self.host, self.port))    
         self.connected = True
-    
+        
         while True:
-            for data in mp.outgoing_commands:
-                generic_send_loop(data, self.serversocket)
-                mp.outgoing_commands.remove(data)
+            output("locks", "acquiring outgoing lock")
+
+            with mp.outgoing_lock:
+                for data in mp.outgoing_commands:
+                    generic_send_loop(data, self.serversocket)
+                    mp.outgoing_commands.remove(data)
+                    
+            output("locks", "releasing outgoing lock")
+            # time.sleep(1)
+
     def listen_loop(self):
         serversocket = self.serversocket
         
@@ -38,3 +45,4 @@ class Client:
         while True:
             if self.connected:
                 mp.incoming_commands, data, size = generic_listen_loop(serversocket, mp.incoming_commands, data, size)
+            # time.sleep(1)

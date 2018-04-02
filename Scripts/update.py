@@ -9,5 +9,6 @@ import services
 from postures.posture_specs import PostureSpec
 
 def output(filename, string):
+    return
     with open("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/Mods/Heuristics/Scripts/{}.txt".format(filename), 'a') as output:
-        output.write(string)
+        output.write(str(string) + "\n")
