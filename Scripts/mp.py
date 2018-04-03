@@ -42,7 +42,7 @@ try:
 
     def send_message_server(self, msg_id, msg):
             global outgoing_commands
-            if self.active:
+            if self.active and self.id != 1000:
                 omega.send(self.id, msg_id, msg.SerializeToString())
                 message = Message(msg_id, msg.SerializeToString())
                 output("locks", "acquiring outgoing lock")
