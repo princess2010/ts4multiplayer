@@ -1,4 +1,4 @@
-from update import output
+from update import output, output_irregardelessly
 
 
 try:
@@ -17,6 +17,9 @@ try:
     from decorator import decorator
     from undecorated import undecorated
     from threading import Lock, RLock
+    from protocolbuffers import DistributorOps_pb2
+    protocol_constants = DistributorOps_pb2.Operation
+
     outgoing_lock = Lock()
     incoming_lock = Lock()
 
@@ -40,13 +43,13 @@ try:
     def send_message_server(self, msg_id, msg):
             global outgoing_commands
             if self.active:
-                    omega.send(self.id, msg_id, msg.SerializeToString())
-                    message = Message(msg_id, msg.SerializeToString())
-                    output("locks", "acquiring outgoing lock")
+                omega.send(self.id, msg_id, msg.SerializeToString())
+                message = Message(msg_id, msg.SerializeToString())
+                output("locks", "acquiring outgoing lock")
 
-                    with outgoing_lock:
-                        outgoing_commands.append(message)
-                    output("locks", "releasing outgoing lock")
+                with outgoing_lock:
+                    outgoing_commands.append(message)
+                output("locks", "releasing outgoing lock")
 
                 
     def send_message_client(self, msg_id, msg):
