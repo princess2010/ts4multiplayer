@@ -18,7 +18,7 @@ import reset
 import services
 import sims4.reload
 import mp
-from distributor.system import Journal
+from distributor.system import Journal, _distributor_log_enabled
 import distributor.system
 
 class SystemDistributor:

@@ -4,6 +4,7 @@ from server.client import Client
 import server.clientmanager
 import distributor.distributor_service
 import system_distributor
+from mp import is_client
 @sims4.commands.Command('get_con', command_type=sims4.commands.CommandType.Live)
 def get_con(_connection=None):
     output = sims4.commands.CheatOutput(_connection) 
@@ -55,8 +56,8 @@ def get_client(self, client_id):
         if distributor.client.id == client_id:
             return distributor
 
-    
-distributor.distributor_service.DistributorService.start = start
-distributor.distributor_service.DistributorService.stop = stop
-distributor.distributor_service.DistributorService.on_tick = on_tick
-distributor.distributor_service.DistributorService.get_client = get_client
+if not is_client:
+    distributor.distributor_service.DistributorService.start = start
+    distributor.distributor_service.DistributorService.stop = stop
+    distributor.distributor_service.DistributorService.on_tick = on_tick
+    distributor.distributor_service.DistributorService.get_client = get_client

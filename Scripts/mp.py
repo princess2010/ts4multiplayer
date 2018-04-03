@@ -42,11 +42,15 @@ try:
 
     def send_message_server(self, msg_id, msg):
             global outgoing_commands
-            if self.active and self.id != 1000:
-                omega.send(self.id, msg_id, msg.SerializeToString())
+            if self.id != 1000:                
+                if self.active:
+                    output_irregardelessly("messages original", msg)
+
+                    omega.send(self.id, msg_id, msg.SerializeToString())
+            else:
                 message = Message(msg_id, msg.SerializeToString())
                 output("locks", "acquiring outgoing lock")
-
+                output_irregardelessly("messages", msg)
                 with outgoing_lock:
                     outgoing_commands.append(message)
                 output("locks", "releasing outgoing lock")
@@ -148,7 +152,7 @@ try:
                     parsed_args.append(parsed_arg)
                     
                 function_to_execute = "{}({})".format(function_name, str(parsed_args).replace('[', '').replace(']',''))
-                # output('arg_handler', str(function_to_execute) + "\n" )
+                output_irregardelessly('arg_handler', str(function_to_execute) + "\n" )
                 exec(function_to_execute)
                 incoming_commands.remove(command)
       output("locks", "releasing incoming lock")
