@@ -44,13 +44,13 @@ try:
             global outgoing_commands
             if self.id != 1000:                
                 if self.active:
-                    output_irregardelessly("messages original", msg)
+                    # output_irregardelessly("messages original", msg)
 
                     omega.send(self.id, msg_id, msg.SerializeToString())
             else:
                 message = Message(msg_id, msg.SerializeToString())
                 output("locks", "acquiring outgoing lock")
-                output_irregardelessly("messages", msg)
+                # output_irregardelessly("messages", msg)
                 with outgoing_lock:
                     outgoing_commands.append(message)
                 output("locks", "releasing outgoing lock")

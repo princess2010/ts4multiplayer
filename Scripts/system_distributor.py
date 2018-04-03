@@ -93,7 +93,16 @@ class SystemDistributor:
         for distributor in self.client_distributors:
             if distributor.client.id == client.id:
                 distributor.remove_client(None)
-            self.client_distributors.remove(distributor)
+                self.client_distributors.remove(distributor)
+                
+    def remove_client_from_id(self, client_id):
+        logger.info('Removing {0}', client_id)
+        self.process()
+        for distributor in self.client_distributors:
+            if distributor.client.id == client_id:
+                distributor.remove_client(None)
+                self.client_distributors.remove(distributor)
+                
                 
     def add_op(self, obj, op):
         self.journal.add(obj, op)
@@ -153,4 +162,8 @@ class SystemDistributor:
                 logger.exception('Error sending view updates to client!')
         self._pending_creates.clear()
 
+    def get_client(self, client_id):
+        for distributor in self.client_distributors:
+            if distributor.client.id == client_id:
+                return distributor
 
