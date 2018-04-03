@@ -2,7 +2,8 @@ from update import output_irregardelessly as output
 import services, glob, sims4, inspect, re
 from server.client import Client
 import server.clientmanager
-
+import distributor.distributor_service
+import system_distributor
 @sims4.commands.Command('get_con', command_type=sims4.commands.CommandType.Live)
 def get_con(_connection=None):
     output = sims4.commands.CheatOutput(_connection) 
@@ -36,3 +37,26 @@ def cly(_connection=None):
     new_client.set_next_sim()
 
     output("Adding client")
+    
+    
+def start(self):
+    import animation.arb
+    animation.arb.set_tag_functions(distributor.system.get_next_tag_id, distributor.system.get_current_tag_set)
+    distributor.system._distributor_instance = system_distributor.SystemDistributor()
+
+def stop(self):
+    distributor.system._distributor_instance = None
+
+def on_tick(self):
+    distributor.system._distributor_instance.process()
+    
+def get_client(self, client_id):
+    for distributor in distributor.system._distributor_instance.client_distributors:
+        if distributor.client.id == client_id:
+            return distributor
+
+    
+distributor.distributor_service.DistributorService.start = start
+distributor.distributor_service.DistributorService.stop = stop
+distributor.distributor_service.DistributorService.on_tick = on_tick
+distributor.distributor_service.DistributorService.get_client = get_client
