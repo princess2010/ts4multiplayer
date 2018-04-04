@@ -25,7 +25,7 @@ try:
 
     incoming_commands = []
     outgoing_commands = []
-
+    
     class Message:
         def __init__(self, msg_id, msg):
             self.msg_id = msg_id
@@ -165,7 +165,7 @@ try:
 
 
     @decorator
-    def wrapper(func, *args, **kwargs):
+    def wrapper_client(func, *args, **kwargs):
         output("locks", "acquiring outgoing lock")
         with outgoing_lock:
             global outgoing_commands
@@ -202,7 +202,7 @@ try:
         sims4.core_services.on_tick = on_tick_client
         
         for index in range(len(command_names)):
-            functions[index] = sims4.commands.Command(command_names[index], command_type=sims4.commands.CommandType.Live)(wrapper(undecorated(functions[index])))
+            functions[index] = sims4.commands.Command(command_names[index], command_type=sims4.commands.CommandType.Live)(wrapper_client(undecorated(functions[index])))
             
         client_instance = multiplayer_client.Client()
         client_instance.listen()
@@ -210,7 +210,6 @@ try:
     else:
         client.Client.send_message = send_message_server
         sims4.core_services.on_tick = on_tick_server
-        
         server_instance = multiplayer_server.Server()
         server_instance.listen()
         server_instance.send()

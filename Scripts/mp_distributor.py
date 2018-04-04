@@ -99,6 +99,26 @@ def on_add(self):
     distributor.add_client(self)
     self.send_selectable_sims_update()
     self.selectable_sims.add_watcher(self, self.send_selectable_sims_update)
+    
+    
+def on_remove(self):
+    if self.active_sim is not None:
+        self._set_active_sim_without_field_distribution(None)
+    if self._account is not None:
+        self._account.unregister_client(self)
+    for sim_info in self._selectable_sims:
+        self.on_sim_removed_from_skewer(sim_info)
+    self.selectable_sims.remove_watcher(self)
+    distributor = Distributor.instance()
+    distributor.remove_client(self)
+    self._selectable_sims = None
+    self.active = False
+    if self.id != 1000:
+        Distributor.instance().remove_client_from_id(1000)
+        client_manager = services.client_manager()
+        client = client_manager.get(1000)
+        client_manager.remove(client)
+
 from distributor.rollback import ProtocolBufferRollback
 from protocolbuffers import Sims_pb2
 from objects import ALL_HIDDEN_REASONS
@@ -137,4 +157,6 @@ if not is_client:
     distributor.distributor_service.DistributorService.stop = stop
     distributor.distributor_service.DistributorService.on_tick = on_tick
     server.client.Client.on_add = on_add
+    server.client.Client.on_remove = on_remove
+
     server.client.Client.send_selectable_sims_update = send_selectable_sims_update
