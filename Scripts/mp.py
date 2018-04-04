@@ -48,12 +48,14 @@ try:
 
                     omega.send(self.id, msg_id, msg.SerializeToString())
             else:
+                # output_irregardelessly("messages client", msg)
                 message = Message(msg_id, msg.SerializeToString())
                 output("locks", "acquiring outgoing lock")
                 # output_irregardelessly("messages", msg)
                 with outgoing_lock:
                     outgoing_commands.append(message)
                 output("locks", "releasing outgoing lock")
+                pass
 
                 
     def send_message_client(self, msg_id, msg):
@@ -150,10 +152,14 @@ try:
                         arg = arg.replace('<._ = ', '').replace('>', '')
                     parsed_arg = parse_arg(arg)
                     parsed_args.append(parsed_arg)
-                    
+                #set connection to other client
+                parsed_args[-1] = 1000
                 function_to_execute = "{}({})".format(function_name, str(parsed_args).replace('[', '').replace(']',''))
                 output_irregardelessly('arg_handler', str(function_to_execute) + "\n" )
-                exec(function_to_execute)
+                try:
+                    exec(function_to_execute)
+                except:
+                    output("Execution Errors", "Something happened")
                 incoming_commands.remove(command)
       output("locks", "releasing incoming lock")
 

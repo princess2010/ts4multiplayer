@@ -22,6 +22,20 @@ def get_cl(_connection=None):
     for client in clients:
         output(str(client.id))
         
+@sims4.commands.Command('get_sel', command_type=sims4.commands.CommandType.Live)
+def get_sel(_connection=None):
+    output = sims4.commands.CheatOutput(_connection) 
+    client = services.client_manager().get(1000)
+    first_client = services.client_manager().get_first_client()
+    for sim in client._selectable_sims:
+        output(str(sim))
+    
+    output(str(len(client._selectable_sims)))
+    
+    for sim_info in first_client._selectable_sims:
+        client._selectable_sims.add_selectable_sim_info(sim_info)
+    client.set_next_sim()
+
 def get_first_client(self):
     for client in self._objects.values():
         # output("log", client.id)
@@ -70,6 +84,12 @@ def on_tick(self):
 
             
 def on_add(self):
+    if self.id != 1000:
+        account = server.account.Account(865431, "Jon Snow")
+        new_client = services.client_manager().create_client(1000, account, 0)
+    for sim_info in self._selectable_sims:
+        new_client._selectable_sims.add_selectable_sim_info(sim_info)
+        new_client.set_next_sim()
     if self._account is not None:
         self._account.register_client(self)
     for sim_info in self._selectable_sims:
@@ -84,7 +104,7 @@ from protocolbuffers import Sims_pb2
 from objects import ALL_HIDDEN_REASONS
 from distributor.ops import GenericProtocolBufferOp
 from protocolbuffers.DistributorOps_pb2 import Operation
-
+import distributor.ops
 def send_selectable_sims_update(self):
     msg = Sims_pb2.UpdateSelectableSims()
     for sim_info in self._selectable_sims:
@@ -108,6 +128,25 @@ def send_selectable_sims_update(self):
                     new_sim.instance_info.zone_name = zone_data_proto.name
     distributor = Distributor.instance().get_client(self.id)
     distributor.add_op_with_no_owner(GenericProtocolBufferOp(Operation.SELECTABLE_SIMS_UPDATE, msg))
+import distributor.fields
+
+    
+def _set_active_sim_without_field_distribution(self, sim_info):
+    # if self._active_sim_info is not None and self._active_sim_info is sim_info:
+        # return
+    # current_sim = self._active_sim_info.get_sim_instance() if self._active_sim_info is not None else None
+    # if sim_info is not None:
+        # self._active_sim_info = sim_info
+        # sim_info.household.on_active_sim_changed(sim_info)
+    # else:
+        # self._active_sim_info = None
+    # self.notify_active_sim_changed(current_sim, new_sim_info=sim_info)
+    output("logs", "Changed active sim")
+    client_distributor = Distributor.instance().get_client(self.id)
+    client_distributor.add_op(self, distributor.ops.UpdateClientActiveSim(sim_info))
+    output("logs", "Changed active sim 2")
+    
+    
     
 if not is_client:
     distributor.distributor_service.DistributorService.start = start
@@ -115,3 +154,4 @@ if not is_client:
     distributor.distributor_service.DistributorService.on_tick = on_tick
     server.client.Client.on_add = on_add
     server.client.Client.send_selectable_sims_update = send_selectable_sims_update
+    server.client.Client._set_active_sim_without_field_distribution = _set_active_sim_without_field_distribution
