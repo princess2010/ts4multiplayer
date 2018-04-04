@@ -25,7 +25,7 @@ from update import output_irregardelessly as output
 
 class SystemDistributor:
     __qualname__ = 'SystemDistributor'
-
+    pie_menu_creates = []
     def __init__(self):
         self.journal = Journal()
         self._pending_creates = weakref.WeakSet()
@@ -110,7 +110,8 @@ class SystemDistributor:
         if type(obj) == Client:
             # output("logs", "The owner of this operation is a client.")
             client_distributor = self.get_client(obj.id)
-            client_distributor.add_op(obj, op)
+            if client_distributor is not  None:
+                client_distributor.add_op(obj, op)
             return
         self.journal.add(obj, op)
 

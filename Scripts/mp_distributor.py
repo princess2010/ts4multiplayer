@@ -131,9 +131,6 @@ def send_selectable_sims_update(self):
 import distributor.fields
 
     
-
-    
-    
     
 if not is_client:
     distributor.distributor_service.DistributorService.start = start
