@@ -18,13 +18,38 @@ try:
     from undecorated import undecorated
     from threading import Lock, RLock
     from protocolbuffers import DistributorOps_pb2
+    from protocolbuffers import Consts_pb2
+
     protocol_constants = DistributorOps_pb2.Operation
 
     outgoing_lock = Lock()
     incoming_lock = Lock()
+    pending_commands_lock = Lock()
 
     incoming_commands = []
     outgoing_commands = []
+    pending_commands = {}
+    pendable_functions = ["has_choices", "generate_choices"]
+    command_to_pb = { Consts_pb2.MSG_OBJECT_IS_INTERACTABLE : "has_choices",
+                                       Consts_pb2.MSG_PIE_MENU_CREATE : "generate_choices"}
+    def get_command_function_from_pb(pb):
+        if pb in command_to_pb:
+            return command_to_pb[pb]
+        else:
+            return None
+    
+    def try_get_client_id_of_pending_command(command):
+        with pending_commands_lock:
+            if command in pending_commands:
+                if len(pending_commands[command]) > 0:
+                    return pending_commands[command][0]
+            else:
+                return None
+        return None
+    def remove_earliest_command_client(command):
+        with pending_commands_lock:
+            if command in pending_commands:
+                pending_commands[command].pop(0)
     
     class Message:
         def __init__(self, msg_id, msg):
@@ -153,9 +178,18 @@ try:
                     parsed_arg = parse_arg(arg)
                     parsed_args.append(parsed_arg)
                 #set connection to other client
-                parsed_args[-1] = 1000
+                client_id = 1000
+                parsed_args[-1] = client_id
                 function_to_execute = "{}({})".format(function_name, str(parsed_args).replace('[', '').replace(']',''))
-                output_irregardelessly('arg_handler', str(function_to_execute) + "\n" )
+                function_name = function_name.strip()
+                output_irregardelessly("client_specific", "New function called {} recieved".format(function_name))
+                if function_name in pendable_functions:
+                    with pending_commands_lock:
+                        if function_name not in pending_commands:
+                            pending_commands[function_name] = []
+                        if client_id not in pending_commands[function_name]:
+                            pending_commands[function_name].append(client_id)
+                output_irregardelessly('arg_handler', str(function_to_execute) )
                 try:
                     exec(function_to_execute)
                 except:

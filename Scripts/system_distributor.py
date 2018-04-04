@@ -3,6 +3,8 @@ from contextlib import contextmanager
 import weakref
 from protocolbuffers import Distributor_pb2 as protocols
 from protocolbuffers.Consts_pb2 import MSG_OBJECTS_VIEW_UPDATE, MGR_UNMANAGED
+from protocolbuffers import Consts_pb2
+
 import protocolbuffers.DistributorOps_pb2
 from distributor import logger
 from distributor.rollback import ProtocolBufferRollback
@@ -21,8 +23,8 @@ import mp
 from distributor.system import Journal, _distributor_log_enabled
 import distributor.system
 from server.client import Client
-from update import output_irregardelessly as output
-
+from update import output_irregardelessly, output
+from mp import get_command_function_from_pb, try_get_client_id_of_pending_command, remove_earliest_command_client
 class SystemDistributor:
     __qualname__ = 'SystemDistributor'
     pie_menu_creates = []
@@ -142,6 +144,23 @@ class SystemDistributor:
         if self.client is None:
             logger.error('Could not add event {0} because there are no attached clients', msg_id)
             return
+        output("client_specific", "Trying to add an event to a client.")
+        function_name = get_command_function_from_pb(msg_id)
+        output("client_specific", "Function is {}".format(function_name))
+
+        if function_name is not None:
+            client_id = try_get_client_id_of_pending_command(function_name)
+            output("client_specific", "Client is {}".format(client_id))
+
+            if client_id is not None:
+                remove_earliest_command_client(function_name)
+                target_client = self.get_client(client_id)
+                if target_client is not None:
+                    target_client.add_event(msg_id, msg, immediate)
+                    output("client_specific", "Adding event to client")
+
+                    return
+        output("client_specific", "No suitable client found, so I'm just going to send it to everybody")
         self.events.append((msg_id, msg))
         if immediate:
             self.process_events()
