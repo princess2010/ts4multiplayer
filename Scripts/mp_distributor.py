@@ -131,20 +131,7 @@ def send_selectable_sims_update(self):
 import distributor.fields
 
     
-def _set_active_sim_without_field_distribution(self, sim_info):
-    # if self._active_sim_info is not None and self._active_sim_info is sim_info:
-        # return
-    # current_sim = self._active_sim_info.get_sim_instance() if self._active_sim_info is not None else None
-    # if sim_info is not None:
-        # self._active_sim_info = sim_info
-        # sim_info.household.on_active_sim_changed(sim_info)
-    # else:
-        # self._active_sim_info = None
-    # self.notify_active_sim_changed(current_sim, new_sim_info=sim_info)
-    output("logs", "Changed active sim")
-    client_distributor = Distributor.instance().get_client(self.id)
-    client_distributor.add_op(self, distributor.ops.UpdateClientActiveSim(sim_info))
-    output("logs", "Changed active sim 2")
+
     
     
     
@@ -154,4 +141,3 @@ if not is_client:
     distributor.distributor_service.DistributorService.on_tick = on_tick
     server.client.Client.on_add = on_add
     server.client.Client.send_selectable_sims_update = send_selectable_sims_update
-    server.client.Client._set_active_sim_without_field_distribution = _set_active_sim_without_field_distribution
