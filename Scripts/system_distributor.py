@@ -20,6 +20,8 @@ import sims4.reload
 import mp
 from distributor.system import Journal, _distributor_log_enabled
 import distributor.system
+from server.client import Client
+from update import output_irregardelessly as output
 
 class SystemDistributor:
     __qualname__ = 'SystemDistributor'
@@ -105,6 +107,11 @@ class SystemDistributor:
                 
                 
     def add_op(self, obj, op):
+        if type(obj) == Client:
+            # output("logs", "The owner of this operation is a client.")
+            client_distributor = self.get_client(obj.id)
+            client_distributor.add_op(obj, op)
+            return
         self.journal.add(obj, op)
 
     def add_op_with_no_owner(self, op):
