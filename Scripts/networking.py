@@ -1,9 +1,8 @@
 import sys
 import pickle
 from struct import unpack, pack
-from mp import Message
+from mp_essential import Message
 from update import output
-import mp
 def generic_send_loop(data, socket):
     data  = pickle.dumps(data)
     length = pack('>Q', sys.getsizeof(data))
