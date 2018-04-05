@@ -24,7 +24,7 @@ from distributor.system import Journal, _distributor_log_enabled
 import distributor.system
 from server.client import Client
 from update import output_irregardelessly, output
-from mp import get_command_function_from_pb, try_get_client_id_of_pending_command, remove_earliest_command_client
+from pending_client_commands import get_command_function_from_pb, try_get_client_id_of_pending_command, remove_earliest_command_client
 class SystemDistributor:
     __qualname__ = 'SystemDistributor'
     pie_menu_creates = []

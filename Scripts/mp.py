@@ -19,37 +19,17 @@ try:
     from threading import Lock, RLock
     from protocolbuffers import DistributorOps_pb2
     from protocolbuffers import Consts_pb2
-
+    from pending_client_commands import pending_commands_lock, pendable_functions
     protocol_constants = DistributorOps_pb2.Operation
 
     outgoing_lock = Lock()
     incoming_lock = Lock()
-    pending_commands_lock = Lock()
 
     incoming_commands = []
     outgoing_commands = []
     pending_commands = {}
-    pendable_functions = ["has_choices", "generate_choices"]
-    command_to_pb = { Consts_pb2.MSG_OBJECT_IS_INTERACTABLE : "has_choices",
-                                       Consts_pb2.MSG_PIE_MENU_CREATE : "generate_choices"}
-    def get_command_function_from_pb(pb):
-        if pb in command_to_pb:
-            return command_to_pb[pb]
-        else:
-            return None
-    
-    def try_get_client_id_of_pending_command(command):
-        with pending_commands_lock:
-            if command in pending_commands:
-                if len(pending_commands[command]) > 0:
-                    return pending_commands[command][0]
-            else:
-                return None
-        return None
-    def remove_earliest_command_client(command):
-        with pending_commands_lock:
-            if command in pending_commands:
-                pending_commands[command].pop(0)
+
+
     
     class Message:
         def __init__(self, msg_id, msg):
