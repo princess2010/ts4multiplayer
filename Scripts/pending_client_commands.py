@@ -1,7 +1,7 @@
 from threading import Lock
 from protocolbuffers import Consts_pb2
 
-
+pending_commands = {}
 pending_commands_lock = Lock()
 
 pendable_functions = ["has_choices", "generate_choices"]
