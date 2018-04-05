@@ -1,8 +1,8 @@
 import sys
 import pickle
 from struct import unpack, pack
-from mp_essential import Message
-from update import output
+from mp_essential import Message, incoming_lock
+from update import output 
 def generic_send_loop(data, socket):
     data  = pickle.dumps(data)
     length = pack('>Q', sys.getsizeof(data))
@@ -26,7 +26,7 @@ def generic_listen_loop(socket, recieved_commands, data, size):
     elif size == sys.getsizeof(data):
         data = pickle.loads(data)
         output("locks", "acquiring incoming lock")
-        with mp.incoming_lock:
+        with incoming_lock:
             recieved_commands.append(data)
         output("locks", "releasing incoming lock")
 

@@ -19,7 +19,6 @@ import gsi_handlers
 import reset
 import services
 import sims4.reload
-import mp
 from distributor.system import Journal, _distributor_log_enabled
 import distributor.system
 from server.client import Client

@@ -1,6 +1,7 @@
 from threading import Lock
-from update import output, output_irregardelessly
+from update import output_irregardelessly as output
 import omega, re
+import services
 from pending_client_commands import pending_commands_lock, pendable_functions
 incoming_commands = []
 outgoing_commands = []
@@ -50,9 +51,8 @@ regex = re.compile('[a-zA-Z]')
 
 def server_sync():
   output("locks", "acquiring incoming lock 1")
-
   with incoming_lock:
-    
+    global incoming_commands
     client_instance = services.client_manager().get_first_client()
 
     for command in incoming_commands:
