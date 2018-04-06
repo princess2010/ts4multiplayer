@@ -86,9 +86,10 @@ def wrapper_client(func, *args, **kwargs):
     #For example, selecting a choice from the pie menu.
     #Only supports one multiplayer client at the moment. 
     output("locks", "acquiring outgoing lock")
+
     with outgoing_lock:
         global outgoing_commands
-        output("arg_handler", "\n" + str(func.__name__) + ", " + str(args) +  "  " + str(kwargs))
+        output_irregardelessly("arg_handler", "\n" + str(func.__name__) + ", " + str(args) + "  " + str(kwargs))
 
         outgoing_commands.append("\n" + str(func.__name__) + ", " + str(args) +  "  " + str(kwargs))
         def do_nothing():
@@ -120,7 +121,8 @@ def on_tick_server():
     except Exception:
         return
     server_sync()
-    
+
+
 if is_client:
     client.Client.send_message = send_message_client
     sims4.core_services.on_tick = on_tick_client
