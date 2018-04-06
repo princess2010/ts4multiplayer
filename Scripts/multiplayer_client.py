@@ -39,6 +39,7 @@ class Client:
             # time.sleep(1)
 
     def listen_loop(self):
+        global incoming_commands
         serversocket = self.serversocket
         
         size = None 

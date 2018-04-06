@@ -43,6 +43,7 @@ class Server:
             # time.sleep(1)
 
     def listen_loop(self):
+        global incoming_commands
         self.serversocket.listen(5)
         self.clientsocket,address = self.serversocket.accept()  
         clientsocket = self.clientsocket

@@ -1,6 +1,6 @@
 from update import output, output_irregardelessly
 import sims4
-
+import socket
 
 try:
     is_client = False

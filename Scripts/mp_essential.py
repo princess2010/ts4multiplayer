@@ -1,8 +1,10 @@
 from threading import Lock
-from update import output_irregardelessly as output
+from update import output
+from update import output_irregardelessly
+
 import omega, re
 import services
-from pending_client_commands import pending_commands_lock, pendable_functions
+from pending_client_commands import pending_commands_lock, pendable_functions, pending_commands
 incoming_commands = []
 outgoing_commands = []
 
