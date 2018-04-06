@@ -88,6 +88,8 @@ def wrapper_client(func, *args, **kwargs):
     output("locks", "acquiring outgoing lock")
     with outgoing_lock:
         global outgoing_commands
+        output("arg_handler", "\n" + str(func.__name__) + ", " + str(args) +  "  " + str(kwargs))
+
         outgoing_commands.append("\n" + str(func.__name__) + ", " + str(args) +  "  " + str(kwargs))
         def do_nothing():
             pass
