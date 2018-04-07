@@ -59,4 +59,9 @@ def rem(_connection=None):
     client_manager.remove(client)
 
     output("Removed client")
+import socket
+@sims4.commands.Command('get_name', command_type=sims4.commands.CommandType.Live)
+def get_name(_connection=None):      
+    output = sims4.commands.CheatOutput(_connection) 
+    output(str(socket.gethostname()))
 

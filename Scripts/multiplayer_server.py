@@ -7,7 +7,7 @@ import sys
 from networking import generic_send_loop, generic_listen_loop
 import update
 import mp
-from update import output 
+from update import output, output_irregardelessly
 from mp_essential import incoming_commands, outgoing_commands
 from mp_essential import incoming_lock, outgoing_lock
 
@@ -18,7 +18,7 @@ class Server:
     def __init__(self):
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         self.serversocket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        self.host = socket.gethostname()                           
+        self.host =  "192.168.1.23"                    
         self.port = 9999                                           
         self.serversocket.bind((self.host, self.port))     
         self.clientsocket = None
@@ -46,13 +46,15 @@ class Server:
         global incoming_commands
         self.serversocket.listen(5)
         self.clientsocket,address = self.serversocket.accept()  
+        output_irregardelessly("network", "Client Connect")
+
         clientsocket = self.clientsocket
         
         size = None 
         data = b''
         
         while True:
-
+            # output_irregardelessly("network", "Server Listen Update")
             incoming_commands, data, size = generic_listen_loop(clientsocket, incoming_commands, data, size)
             # time.sleep(1)
 
