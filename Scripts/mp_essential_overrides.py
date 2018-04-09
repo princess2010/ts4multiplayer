@@ -64,6 +64,7 @@ def send_message_server(self, msg_id, msg):
             if self.active:
 
                 omega.send(self.id, msg_id, msg.SerializeToString())
+                # output_irregardelessly("msg", msg)
         else:
             message = Message(msg_id, msg.SerializeToString())
             output("locks", "acquiring outgoing lock")
