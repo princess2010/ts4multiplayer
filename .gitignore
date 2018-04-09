@@ -1,5 +1,21 @@
 
+<<<<<<< HEAD
 *.txt
 *.iml
 *.xml
 *.pyc
+=======
+Scripts/__pycache__/update.cpython-36.pyc
+Scripts/id.txt
+Scripts/messages.txt
+Scripts/arg_handler.txt
+Scripts/messages original.txt
+Scripts/logs.txt
+Scripts/ref/messages client.txt
+Scripts/ref/messages original.txt
+Scripts/client_specific.txt
+Scripts/locks.txt
+.idea/Heuristics.iml
+*.xml
+*.txt
+>>>>>>> 69aa028428e3746666b02fe0ad20642eafaaa135
