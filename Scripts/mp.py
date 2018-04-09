@@ -1,11 +1,11 @@
 from update import output, output_irregardelessly
 import sims4
 import socket
-
+from config import user_directory
 try:
     is_client = False
     try:
-        open("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/Mods/Heuristics/Scripts/client", "rb")
+        open("{}client".format(user_directory), "rb")
         is_client = True
         
     except Exception:

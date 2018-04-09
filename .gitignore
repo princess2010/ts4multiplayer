@@ -11,3 +11,4 @@ Scripts/client_specific.txt
 Scripts/locks.txt
 .idea/Heuristics.iml
 *.xml
+*.txt
