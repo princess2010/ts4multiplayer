@@ -4,15 +4,16 @@ from struct import unpack, pack
 import threading
 import time
 import sys
-import mp
-from update import output
+from update import output 
+from mp_essential import incoming_commands, outgoing_commands
+from mp_essential import incoming_lock, outgoing_lock
 
 from networking import generic_send_loop, generic_listen_loop
 class Client:
     def __init__(self):
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         self.serversocket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        self.host = socket.gethostname()                           
+        self.host =  "192.168.1.23"                    
         self.port = 9999       
         self.connected = False
 
@@ -29,20 +30,21 @@ class Client:
         while True:
             output("locks", "acquiring outgoing lock")
 
-            with mp.outgoing_lock:
-                for data in mp.outgoing_commands:
+            with outgoing_lock:
+                for data in outgoing_commands:
                     generic_send_loop(data, self.serversocket)
-                    mp.outgoing_commands.remove(data)
+                    outgoing_commands.remove(data)
                     
             output("locks", "releasing outgoing lock")
             # time.sleep(1)
 
     def listen_loop(self):
+        global incoming_commands
         serversocket = self.serversocket
         
         size = None 
         data = b''
         while True:
             if self.connected:
-                mp.incoming_commands, data, size = generic_listen_loop(serversocket, mp.incoming_commands, data, size)
+                incoming_commands, data, size = generic_listen_loop(serversocket, incoming_commands, data, size)
             # time.sleep(1)
