@@ -48,7 +48,7 @@ def parse_arg(arg):
 def get_file_matching_name(name):
     for root, dirs, files in os.walk("{}/saves/scratch".format(user_directory.replace("Mods/Heuristics/Scripts/", ""))):
         for file_name in files:
-            replaced = file_name.replace("zoneObjects-", "").replace("-6.sav", "").rstrip()
+            replaced = file_name.replace("zoneObjects-", "").replace("-6.sav", "").strip()
             replaced = replaced[1:]
             output_irregardelessly("zone_id", "{} , {}".format(replaced, name))
             if name == replaced:
