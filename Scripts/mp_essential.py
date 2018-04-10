@@ -9,7 +9,7 @@ from pending_client_commands import pending_commands_lock, pendable_functions, p
 from server_commands.interaction_commands import has_choices, generate_choices, generate_phone_choices,  select_choice, cancel_mixer_interaction, cancel_super_interaction, push_interaction
 from server_commands.clock_commands import set_speed
 from server_commands.sim_commands import set_active_sim
-
+from config import user_directory
 incoming_commands = []
 outgoing_commands = []
 
@@ -46,7 +46,7 @@ def parse_arg(arg):
     return new_arg
     
 def get_file_matching_name(name):
-    for root, dirs, files in os.walk("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/saves/scratch"):
+    for root, dirs, files in os.walk("{}/saves/scratch".format(user_directory.replace("Mods/Heuristics/Scripts/", ""):
         for file_name in files:
             if name in file_name:
 
