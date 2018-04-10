@@ -64,7 +64,7 @@ def client_sync():
             if type(unpacked_msg_data) is Message:
                 omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
             elif type(unpacked_msg_data) is File:
-                client_file = open(get_file_matching_name(unpacked_msg_data.file_name).replace("\\", "/", "w"))
+                client_file = open(get_file_matching_name(unpacked_msg_data.file_name)[0], "w"))
                 new_architecture_data = unpacked_msg_data.file_contents
                 client_file.write(new_architecture_data)
                 client_file.close()
