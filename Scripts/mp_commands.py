@@ -2,7 +2,7 @@ from update import output_irregardelessly as output
 import services, sims4
 import server.clientmanager
 import distributor.system
-
+from config import user_directory
 
 @sims4.commands.Command('get_con', command_type=sims4.commands.CommandType.Live)
 def get_con(_connection=None):
@@ -76,11 +76,9 @@ def load_zone(_connection=None):
         # output("msg", dir(zone_objects_pb))
         zone_objects_pb.ParseFromString(zone_objects_message)
         # output("msg", zone_objects_pb)
-        output("msg", dir(persistence_module))
         # output("msg", zone_objects_message)
         persistence_module.run_persistence_operation(persistence_module.PersistenceOpType.kPersistenceOpLoadZoneObjects, zone_objects_pb, 0, None)
-        persistence_service = services.get_persistence_service()
-        persistence_service.build_caches()
+
     except Exception as e:
         output("er", e)
         
@@ -102,3 +100,27 @@ def travel(_connection = None):
     client = services.client_manager().get_first_client()
     zone = services.current_zone()
     travel_sim_to_zone(client.active_sim.id, zone.id)
+
+@sims4.commands.Command('get_zone', command_type=sims4.commands.CommandType.Live)
+def get_zone_id(_connection = None):
+    output = sims4.commands.CheatOutput(_connection) 
+
+    client = services.client_manager().get_first_client()
+    zone = services.current_zone()
+    output(str(zone.id))
+    
+import os
+@sims4.commands.Command('find_stuff', command_type=sims4.commands.CommandType.Live)
+
+def find(_connection = None):
+    output = sims4.commands.CheatOutput(_connection) 
+    output("working")
+    zone = services.current_zone()
+    name = str(hex(zone.id)).replace("0x", "")
+    # output(str(name))
+    for root, dirs, files in os.walk("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/saves/scratch"):
+        for file in files:
+            if name in file:
+                # output(str(name))
+
+                output(str(os.path.join(root, file)))
