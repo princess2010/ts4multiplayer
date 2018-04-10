@@ -68,17 +68,19 @@ def get_name(_connection=None):
 from protocolbuffers import FileSerialization_pb2 as serialization
 import persistence_module
 import services.persistence_service as ps
+from mp_essential import get_file_matching_name
 @sims4.commands.Command('load_zone', command_type=sims4.commands.CommandType.Live)
 def load_zone(_connection=None):      
     try:
+        zone = services.current_zone()
+        name = str(hex(zone.id)).replace("0x", "")
         zone_objects_pb = serialization.ZoneObjectData()
-        zone_objects_message = open("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/saves/scratch/scratch_1248/zoneObjects-093e073e3fbb49ce-6.sav", "rb").read()
+        zone_objects_message = open(get_file_matching_name(name)[0], "rb").read()
         # output("msg", dir(zone_objects_pb))
         zone_objects_pb.ParseFromString(zone_objects_message)
         # output("msg", zone_objects_pb)
         # output("msg", zone_objects_message)
         persistence_module.run_persistence_operation(persistence_module.PersistenceOpType.kPersistenceOpLoadZoneObjects, zone_objects_pb, 0, None)
-
     except Exception as e:
         output("er", e)
         
@@ -110,28 +112,27 @@ def get_zone_id(_connection = None):
     output(str(zone.id))
     
 import os
-from mp_essential import outgoing_commands, outgoing_lock, File, get_file_matching_name
+from mp_essential import outgoing_commands, outgoing_lock, File
 import time
 from server_commands.persistence_commands import save_game
 @sims4.commands.Command('send_lot_architecture_and_reload', command_type=sims4.commands.CommandType.Live)
 
 def send_lot_architecture_and_reload(_connection = None):
-    output = sims4.commands.CheatOutput(_connection) 
+    # output = sims4.commands.CheatOutput(_connection) 
     save_game()
     # output("working")
     zone = services.current_zone()
     name = str(hex(zone.id)).replace("0x", "")
-    
+    output("zone_id", "{}, {}".format(name, zone.id))
     file_path = None
     # output(str(name))
     file_path, file_name = get_file_matching_name(name)
                 
     if file_path is not None:
         with outgoing_lock:
+            output("zone_id", "{}, {}".format(file_path, file_name))
             msg = File(file_name, open(file_path, "rb").read())
             outgoing_commands.append(msg)
-            time.sleep(0.5)
-        travel()
         
         
 import injector, zone

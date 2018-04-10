@@ -48,9 +48,12 @@ def parse_arg(arg):
 def get_file_matching_name(name):
     for root, dirs, files in os.walk("{}/saves/scratch".format(user_directory.replace("Mods/Heuristics/Scripts/", ""))):
         for file_name in files:
-            if name in file_name:
-
+            replaced = file_name.replace("zoneObjects-", "").replace("-6.sav", "").rstrip()
+            replaced = replaced[1:]
+            output_irregardelessly("zone_id", "{} , {}".format(replaced, name))
+            if name == replaced:
                 file_path = str(os.path.join(root, file_name))
+                break
     return file_path, file_name
     
 def client_sync():
