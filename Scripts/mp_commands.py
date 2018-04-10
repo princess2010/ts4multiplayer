@@ -116,7 +116,7 @@ import time
 
 def send_lot_architecture_and_reload(_connection = None):
     output = sims4.commands.CheatOutput(_connection) 
-    output("working")
+    # output("working")
     zone = services.current_zone()
     name = str(hex(zone.id)).replace("0x", "")
     

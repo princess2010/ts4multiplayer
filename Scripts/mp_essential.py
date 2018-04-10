@@ -2,7 +2,7 @@ from threading import Lock
 from update import output
 from update import output_irregardelessly
 
-import omega, re
+import omega, re, os
 import services
 from pending_client_commands import pending_commands_lock, pendable_functions, pending_commands
 
