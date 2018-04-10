@@ -112,10 +112,12 @@ def get_zone_id(_connection = None):
 import os
 from mp_essential import outgoing_commands, outgoing_lock, File, get_file_matching_name
 import time
+from persistence_commands import save_game
 @sims4.commands.Command('send_lot_architecture_and_reload', command_type=sims4.commands.CommandType.Live)
 
 def send_lot_architecture_and_reload(_connection = None):
     output = sims4.commands.CheatOutput(_connection) 
+    save_game()
     # output("working")
     zone = services.current_zone()
     name = str(hex(zone.id)).replace("0x", "")
