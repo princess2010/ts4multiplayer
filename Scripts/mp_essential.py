@@ -21,6 +21,12 @@ class Message:
         self.msg_id = msg_id
         self.msg = msg
         
+class File: 
+    def __init__(self, file_name, file_contents):
+        self.file_name = file_name
+        self.file_contents = file_contents
+        
+        
 def parse_arg(arg):
     #Horrible, hacky way of parsing arguments from the client commands.
     new_arg = arg
@@ -39,6 +45,13 @@ def parse_arg(arg):
 
     return new_arg
     
+def get_file_matching_name(name):
+    for root, dirs, files in os.walk("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/saves/scratch"):
+        for file_name in files:
+            if name in file_name:
+
+                file_path = str(os.path.join(root, file_name))
+    return file_path, file_name
     
 def client_sync():
     output("locks", "acquiring incoming lock 1")
@@ -48,7 +61,13 @@ def client_sync():
         client_instance = services.client_manager().get_first_client()
         output("receive", "{} \n".format(len(incoming_commands)))
         for unpacked_msg_data in incoming_commands:
-            omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
+            if type(unpacked_msg_data) is Message:
+                omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
+            elif type(unpacked_msg_data) is File:
+                client_file = open(get_file_matching_name(unpacked_msg_data.file_name), "w")
+                new_architecture_data = unpacked_msg_data.file_contents
+                client_file.write(new_architecture_data)
+                client_file.close()
             incoming_commands.remove(unpacked_msg_data)
     output("locks", "releasing incoming lock")
 

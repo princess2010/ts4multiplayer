@@ -110,17 +110,39 @@ def get_zone_id(_connection = None):
     output(str(zone.id))
     
 import os
-@sims4.commands.Command('find_stuff', command_type=sims4.commands.CommandType.Live)
+from mp_essential import outgoing_commands, outgoing_lock, File, get_file_matching_name
+import time
+@sims4.commands.Command('send_lot_architecture_and_reload', command_type=sims4.commands.CommandType.Live)
 
-def find(_connection = None):
+def send_lot_architecture_and_reload(_connection = None):
     output = sims4.commands.CheatOutput(_connection) 
     output("working")
     zone = services.current_zone()
     name = str(hex(zone.id)).replace("0x", "")
+    
+    file_path = None
     # output(str(name))
-    for root, dirs, files in os.walk("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/saves/scratch"):
-        for file in files:
-            if name in file:
-                # output(str(name))
+    file_path, file_name = get_file_matching_name(name)
+                
+    if file_path is not None:
+        with outgoing_lock:
+            msg = File(file_name, open(file_path, "rb").read())
+            outgoing_commands.append(msg)
+            time.sleep(0.5)
+        travel()
+        
+        
+import injector, zone
 
-                output(str(os.path.join(root, file)))
+def on_build_buy_exit(self):
+    self._update_navmesh_id_if_neccessary()
+    self.is_in_build_buy = False
+    self._add_expenditures_and_do_post_bb_fixup()
+    services.active_lot().flag_as_premade(False)
+    services.get_event_manager().process_events_for_household(test_events.TestEvent.OnExitBuildBuy, None)
+    self._should_perform_deferred_front_door_check = True
+    laundry_service = services.get_laundry_service()
+    if laundry_service is not None:
+        laundry_service.on_build_buy_exit()
+    send_lot_architecture_and_reload()
+zone.Zone.on_build_buy_exit = on_build_buy_exit
