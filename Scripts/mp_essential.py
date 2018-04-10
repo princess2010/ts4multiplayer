@@ -46,7 +46,7 @@ def parse_arg(arg):
     return new_arg
     
 def get_file_matching_name(name):
-    for root, dirs, files in os.walk("{}/saves/scratch".format(user_directory.replace("Mods/Heuristics/Scripts/", ""):
+    for root, dirs, files in os.walk("{}/saves/scratch".format(user_directory.replace("Mods/Heuristics/Scripts/", ""))):
         for file_name in files:
             if name in file_name:
 
