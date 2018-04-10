@@ -133,6 +133,7 @@ def send_lot_architecture_and_reload(_connection = None):
         
         
 import injector, zone
+from event_testing import test_events
 
 def on_build_buy_exit(self):
     self._update_navmesh_id_if_neccessary()
