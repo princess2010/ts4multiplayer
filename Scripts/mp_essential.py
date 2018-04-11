@@ -71,14 +71,17 @@ def client_sync():
                     if client == None:
                         return
                 except Exception:
-                    return
+                    pass
+                    
                 omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
+                incoming_commands.remove(unpacked_msg_data)
+
             elif type(unpacked_msg_data) is File:
                 client_file = open(get_file_matching_name(unpacked_msg_data.file_name)[0], "wb")
                 new_architecture_data = unpacked_msg_data.file_contents
                 client_file.write(new_architecture_data)
                 client_file.close()
-            incoming_commands.remove(unpacked_msg_data)
+                incoming_commands.remove(unpacked_msg_data)
     output("locks", "releasing incoming lock")
 
    
