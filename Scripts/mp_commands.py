@@ -131,7 +131,7 @@ def send_lot_architecture_and_reload(_connection = None):
     if file_path is not None:
         with outgoing_lock:
             output("zone_id", "{}, {}".format(file_path, file_name))
-            msg = File(file_name, open(file_path, "rb").read())
+            msg = File(name, open(file_path, "rb").read())
             outgoing_commands.append(msg)
         
         
