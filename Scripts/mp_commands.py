@@ -76,10 +76,10 @@ def load_zone(_connection=None):
         name = str(hex(zone.id)).replace("0x", "")
         zone_objects_pb = serialization.ZoneObjectData()
         zone_objects_message = open(get_file_matching_name(name)[0], "rb").read()
-        # output("msg", dir(zone_objects_pb))
+        output("msg", dir(zone_objects_pb))
         zone_objects_pb.ParseFromString(zone_objects_message)
-        # output("msg", zone_objects_pb)
-        # output("msg", zone_objects_message)
+        output("msg", zone_objects_pb)
+        output("msg", zone_objects_message)
         persistence_module.run_persistence_operation(persistence_module.PersistenceOpType.kPersistenceOpLoadZoneObjects, zone_objects_pb, 0, None)
     except Exception as e:
         output("er", e)

@@ -61,12 +61,13 @@ def client_sync():
 
     with incoming_lock:
         global incoming_commands
-        client_instance = services.client_manager().get_first_client()
         output("receive", "{} \n".format(len(incoming_commands)))
         for unpacked_msg_data in incoming_commands:
             if type(unpacked_msg_data) is Message:
                 try:
                     client = services.client_manager().get_first_client()
+                    client_instance = services.client_manager().get_first_client()
+                    
                     if client == None:
                         return
                 except Exception:
