@@ -103,12 +103,7 @@ def on_tick_client():
     #On Tick override for the client.
     #If we don't have any client, that means we aren't in a zone yet.
     #If we do have at least one client, that means we are in a zone and can sync information.
-    try:
-        client = services.client_manager().get_first_client()
-        if client == None:
-            return
-    except Exception:
-        return
+
     client_sync()
 
 def on_tick_server():

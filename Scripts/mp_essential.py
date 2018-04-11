@@ -65,6 +65,12 @@ def client_sync():
         output("receive", "{} \n".format(len(incoming_commands)))
         for unpacked_msg_data in incoming_commands:
             if type(unpacked_msg_data) is Message:
+                try:
+                    client = services.client_manager().get_first_client()
+                    if client == None:
+                        return
+                except Exception:
+                    return
                 omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
             elif type(unpacked_msg_data) is File:
                 client_file = open(get_file_matching_name(unpacked_msg_data.file_name)[0], "wb")
