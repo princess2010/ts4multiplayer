@@ -115,6 +115,8 @@ import os
 from mp_essential import outgoing_commands, outgoing_lock, File
 import time
 from server_commands.persistence_commands import save_game
+
+#persistence.save_game'
 @sims4.commands.Command('send_lot_architecture_and_reload', command_type=sims4.commands.CommandType.Live)
 
 def send_lot_architecture_and_reload(_connection = None):
@@ -147,5 +149,6 @@ def on_build_buy_exit(self):
     laundry_service = services.get_laundry_service()
     if laundry_service is not None:
         laundry_service.on_build_buy_exit()
-    send_lot_architecture_and_reload()
+    save_game()
+
 zone.Zone.on_build_buy_exit = on_build_buy_exit
