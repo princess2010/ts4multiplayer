@@ -18,7 +18,7 @@ class Server:
     def __init__(self):
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         self.serversocket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        self.host =  "192.168.1.23"                    
+        self.host =  ""                    
         self.port = 9999                                           
         self.serversocket.bind((self.host, self.port))     
         self.clientsocket = None

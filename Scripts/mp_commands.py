@@ -2,7 +2,7 @@ from update import output_irregardelessly as output
 import services, sims4
 import server.clientmanager
 import distributor.system
-
+from config import user_directory
 
 @sims4.commands.Command('get_con', command_type=sims4.commands.CommandType.Live)
 def get_con(_connection=None):
@@ -68,19 +68,19 @@ def get_name(_connection=None):
 from protocolbuffers import FileSerialization_pb2 as serialization
 import persistence_module
 import services.persistence_service as ps
+from mp_essential import get_file_matching_name
 @sims4.commands.Command('load_zone', command_type=sims4.commands.CommandType.Live)
 def load_zone(_connection=None):      
     try:
+        zone = services.current_zone()
+        name = str(hex(zone.id)).replace("0x", "")
         zone_objects_pb = serialization.ZoneObjectData()
-        zone_objects_message = open("C:/Users/theoj/Documents/Electronic Arts/The Sims 4/saves/scratch/scratch_1248/zoneObjects-093e073e3fbb49ce-6.sav", "rb").read()
-        # output("msg", dir(zone_objects_pb))
+        zone_objects_message = open(get_file_matching_name(name)[0], "rb").read()
+        output("msg", dir(zone_objects_pb))
         zone_objects_pb.ParseFromString(zone_objects_message)
-        # output("msg", zone_objects_pb)
-        output("msg", dir(persistence_module))
-        # output("msg", zone_objects_message)
+        output("msg", zone_objects_pb)
+        output("msg", zone_objects_message)
         persistence_module.run_persistence_operation(persistence_module.PersistenceOpType.kPersistenceOpLoadZoneObjects, zone_objects_pb, 0, None)
-        persistence_service = services.get_persistence_service()
-        persistence_service.build_caches()
     except Exception as e:
         output("er", e)
         
@@ -102,3 +102,53 @@ def travel(_connection = None):
     client = services.client_manager().get_first_client()
     zone = services.current_zone()
     travel_sim_to_zone(client.active_sim.id, zone.id)
+
+@sims4.commands.Command('get_zone', command_type=sims4.commands.CommandType.Live)
+def get_zone_id(_connection = None):
+    output = sims4.commands.CheatOutput(_connection) 
+
+    client = services.client_manager().get_first_client()
+    zone = services.current_zone()
+    output(str(zone.id))
+    
+import os
+from mp_essential import outgoing_commands, outgoing_lock, File
+import time
+from server_commands.persistence_commands import save_game
+
+#persistence.save_game'
+@sims4.commands.Command('send_lot_architecture_and_reload', command_type=sims4.commands.CommandType.Live)
+
+def send_lot_architecture_and_reload(_connection = None):
+    # output = sims4.commands.CheatOutput(_connection) 
+    # output("working")
+    zone = services.current_zone()
+    name = str(hex(zone.id)).replace("0x", "")
+    output("zone_id", "{}, {}".format(name, zone.id))
+    file_path = None
+    # output(str(name))
+    file_path, file_name = get_file_matching_name(name)
+                
+    if file_path is not None:
+        with outgoing_lock:
+            output("zone_id", "{}, {}".format(file_path, file_name))
+            msg = File(name, open(file_path, "rb").read())
+            outgoing_commands.append(msg)
+        
+        
+import injector, zone
+from event_testing import test_events
+
+def on_build_buy_exit(self):
+    self._update_navmesh_id_if_neccessary()
+    self.is_in_build_buy = False
+    self._add_expenditures_and_do_post_bb_fixup()
+    services.active_lot().flag_as_premade(False)
+    services.get_event_manager().process_events_for_household(test_events.TestEvent.OnExitBuildBuy, None)
+    self._should_perform_deferred_front_door_check = True
+    laundry_service = services.get_laundry_service()
+    if laundry_service is not None:
+        laundry_service.on_build_buy_exit()
+    save_game()
+
+zone.Zone.on_build_buy_exit = on_build_buy_exit

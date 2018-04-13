@@ -2,14 +2,14 @@ from threading import Lock
 from update import output
 from update import output_irregardelessly
 
-import omega, re
+import omega, re, os
 import services
 from pending_client_commands import pending_commands_lock, pendable_functions, pending_commands
 
 from server_commands.interaction_commands import has_choices, generate_choices, generate_phone_choices,  select_choice, cancel_mixer_interaction, cancel_super_interaction, push_interaction
 from server_commands.clock_commands import set_speed
 from server_commands.sim_commands import set_active_sim
-
+from config import user_directory
 incoming_commands = []
 outgoing_commands = []
 
@@ -20,6 +20,12 @@ class Message:
     def __init__(self, msg_id, msg):
         self.msg_id = msg_id
         self.msg = msg
+        
+class File: 
+    def __init__(self, file_name, file_contents):
+        self.file_name = file_name
+        self.file_contents = file_contents
+        
         
 def parse_arg(arg):
     #Horrible, hacky way of parsing arguments from the client commands.
@@ -39,17 +45,43 @@ def parse_arg(arg):
 
     return new_arg
     
+def get_file_matching_name(name):
+    for root, dirs, files in os.walk("{}/saves/scratch".format(user_directory.replace("Mods/Heuristics/Scripts/", ""))):
+        for file_name in files:
+            replaced = file_name.replace("zoneObjects-", "").replace("-6.sav", "").strip()
+            replaced = replaced[1:]
+            output_irregardelessly("zone_id", "{} , {}".format(replaced, name))
+            if name == replaced:
+                file_path = str(os.path.join(root, file_name))
+                break
+    return file_path, file_name
     
 def client_sync():
     output("locks", "acquiring incoming lock 1")
 
     with incoming_lock:
         global incoming_commands
-        client_instance = services.client_manager().get_first_client()
         output("receive", "{} \n".format(len(incoming_commands)))
         for unpacked_msg_data in incoming_commands:
-            omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
-            incoming_commands.remove(unpacked_msg_data)
+            if type(unpacked_msg_data) is Message:
+                try:
+                    client = services.client_manager().get_first_client()
+                    client_instance = services.client_manager().get_first_client()
+                    
+                    if client == None:
+                        return
+                except Exception:
+                    pass
+                    
+                omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
+                incoming_commands.remove(unpacked_msg_data)
+
+            elif type(unpacked_msg_data) is File:
+                client_file = open(get_file_matching_name(unpacked_msg_data.file_name)[0], "wb")
+                new_architecture_data = unpacked_msg_data.file_contents
+                client_file.write(new_architecture_data)
+                client_file.close()
+                incoming_commands.remove(unpacked_msg_data)
     output("locks", "releasing incoming lock")
 
    
