@@ -71,7 +71,7 @@ def client_sync():
                     if client == None:
                         return
                 except Exception:
-                    pass
+                    continue
                     
                 omega.send(client_instance.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
                 incoming_commands.remove(unpacked_msg_data)
