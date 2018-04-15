@@ -199,6 +199,7 @@ class SystemDistributor:
     def get_distributor_with_active_sim_matching_sim_id(self, sim_id):
         for distributor in self.client_distributors:
             if distributor.client.active_sim != None:
+                output_irregardelessly("chat", "Active client sim id: {}".format(distributor.client.active_sim.id))
                 if distributor.client.active_sim.id == sim_id:
                     return distributor
         return None
