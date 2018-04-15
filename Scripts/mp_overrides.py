@@ -100,8 +100,46 @@ def send_selectable_sims_update(self):
     distributor = Distributor.instance().get_client(self.id)
     distributor.add_op_with_no_owner(GenericProtocolBufferOp(Operation.SELECTABLE_SIMS_UPDATE, msg))
 
-    
-    
+# import ui.ui_dialog_service
+# from clock import ClockSpeedMode
+# from ui.ui_dialog import PhoneRingType
+# from protocolbuffers import Consts_pb2, Dialog_pb2
+
+# def dialog_show(self, dialog, phone_ring_type, auto_response=DEFAULT, caller_id=None, immediate=False, **kwargs):
+    # if not self._enabled:
+        # return
+    # self._active_dialogs[dialog.dialog_id] = dialog
+    # if dialog.has_responses() and self.auto_respond:
+        # dialog.do_auto_respond(auto_response=auto_response)
+        # return
+    # dialog_msg = dialog.build_msg(**kwargs)
+    # if phone_ring_type != PhoneRingType.NO_RING:
+        # if not self._is_phone_silenced:
+            # game_clock_services = services.game_clock_service()
+            # if game_clock_services.clock_speed != ClockSpeedMode.PAUSED:
+                # game_clock_services.set_clock_speed(ClockSpeedMode.NORMAL)
+        # msg_type = Consts_pb2.MSG_UI_PHONE_RING
+        # msg_data = Dialog_pb2.UiPhoneRing()
+        # msg_data.phone_ring_type = phone_ring_type
+        # msg_data.dialog = dialog_msg
+        # if caller_id is not None:
+            # msg_data.caller_id = caller_id
+        # distributor = Distributor.instance()
+        # distributor.add_event(msg_type, msg_data)
+    # else:
+        # msg_type = dialog.DIALOG_MSG_TYPE
+        # msg_data = dialog_msg
+        # dialog.distribute_dialog(msg_type, msg_data, immediate=immediate)    
+import ui.ui_dialog
+def distribute_dialog(self, dialog_type, dialog_msg, immediate=False):
+    distributor = Distributor.instance()
+    # distributor.add_event(dialog_type, dialog_msg, immediate=immediate)
+    distributor_to_send_to = distributor.get_distributor_with_active_sim_matching_sim_id(dialog_msg.owner_id)
+    distributor.add_event_for_client(distributor_to_send_to, dialog_type, dialog_msg, immediate)
+    try:
+        output("events", "{}".format(dialog_msg.owner_id))
+    except Exception as e:
+        pass
 if not is_client:
     server.clientmanager.ClientManager.get_first_client = get_first_client
 
@@ -110,3 +148,5 @@ if not is_client:
     server.client.Client.on_remove = on_remove
 
     server.client.Client.send_selectable_sims_update = send_selectable_sims_update
+    ui.ui_dialog.UiDialogBase.distribute_dialog = distribute_dialog
+    # ui.ui_dialog_service.UiDialogueService.dialog_show = dialog_show
