@@ -32,7 +32,7 @@ class File:
 def parse_arg(arg):
     #Horrible, hacky way of parsing arguments from the client commands.
     new_arg = arg
-    orig_arg = new_arg.replace('"', "").replace("(", "").replace(")", "").replace("'", "")
+    orig_arg = new_arg.replace('"', "").replace("(", "").replace(")", "").replace("'", "").strip()
     new_arg = orig_arg
     try:
         new_arg = float(orig_arg)

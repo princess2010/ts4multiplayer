@@ -1,12 +1,6 @@
-"""
-Sims 4 Change Name Console Command
-by Scumbumbo @ ModTheSims
-Version 5 04/20/15 - Added UI dialog for name input
-Version 5a 05/01/15 - Updated for 04/26/15 game patch
-Version 7 11/27/17 - Updated UI generation code for 11/15/17 game patch
-                    - Special thanks to Deaderpool for some sample code that helped me figure this out
-Version 7a 03/19/18 - Increased max length for first and names to 100 characters
-"""
+#handle chat dialog
+
+#originally by Scumbumbo
 import sims4.commands
 import sims.sim_info
 import services

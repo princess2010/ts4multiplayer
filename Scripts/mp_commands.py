@@ -135,7 +135,14 @@ def send_lot_architecture_and_reload(_connection = None):
             msg = File(name, open(file_path, "rb").read())
             outgoing_commands.append(msg)
         
-        
+@sims4.commands.Command('change_persona', command_type=sims4.commands.CommandType.Live)
+
+def change_persona(_connection = None):
+    output = sims4.commands.CheatOutput(_connection) 
+    # output("working")
+    client = services.client_manager().get_first_client()
+    client._account._persona_name = "Corrin"
+    output(client._account._persona_name)
 import injector, zone
 from event_testing import test_events
 
