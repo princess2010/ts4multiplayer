@@ -23,7 +23,13 @@ def get_first_client(self):
             continue
         return client
         
-    
+def get_first_client_id(self): 
+    # Get the original client instead of the stand-in client. Just in-case some EA code is finnicky with multiple clients. Only supports one
+    # multiplayer client at the moment.
+    for client in self._objects.values():
+        if client.id == 1000:
+            continue
+        return client.id
 
 def start(self):
     #Override the original function with one that creates a "SystemDistributor" instead of a regular old Distributor. 
@@ -142,6 +148,7 @@ def distribute_dialog(self, dialog_type, dialog_msg, immediate=False):
         pass
 if not is_client:
     server.clientmanager.ClientManager.get_first_client = get_first_client
+    server.clientmanager.ClientManager.get_first_client_id = get_first_client_id
 
     distributor.distributor_service.DistributorService.start = start
     server.client.Client.on_add = on_add
