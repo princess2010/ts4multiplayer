@@ -16,7 +16,7 @@ from undecorated import undecorated
 
 
 
-
+from csn import mp_chat
 
 
 
@@ -28,7 +28,8 @@ command_names = ['interactions.has_choices',
                                       'interactions.cancel_si',
                                       'interactions.push',
                                       'clock.setspeed',
-                                      'sims.set_active']
+                                      'sims.set_active',
+                                      "mp_chat"]
            
                                       
 functions= [has_choices,
@@ -39,7 +40,8 @@ functions= [has_choices,
                     cancel_super_interaction,
                     push_interaction,
                     set_speed, 
-                    set_active_sim]
+                    set_active_sim,
+                    mp_chat]
 
            
 function_names = ["has_choices",
@@ -50,7 +52,8 @@ function_names = ["has_choices",
                     "cancel_super_interaction",
                     "push_interaction",
                     "set_speed",
-                    "set_active_sim"]
+                    "set_active_sim",
+                    "mp_chat"]
 
 
 def send_message_server(self, msg_id, msg):

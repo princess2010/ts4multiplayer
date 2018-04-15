@@ -133,10 +133,8 @@ import services
 import sims4
 from sims4.localization import LocalizationHelperTuning
 from ui.ui_dialog_notification import UiDialogNotification
-@sims4.commands.Command('chat', command_type=sims4.commands.CommandType.Live)
-def show_notif(dialogue, _connection = None):
-    client = services.client_manager().get_first_client()
-    text = dialogue
-    title = "Something happened."
-    notification = UiDialogNotification.TunableFactory().default(client.active_sim, text=lambda **_: LocalizationHelperTuning.get_raw_text(text), title=lambda **_: LocalizationHelperTuning.get_raw_text(title))
-    notification.show_dialog(icon_override=(None, client.active_sim))
+from distributor.system import Distributor
+def show_notif(sim, text):
+    title = "{} said".format(Distributor.instance().get_distributor_with_active_sim_matching_sim_id(sim.id).client._account.persona_name)
+    notification = UiDialogNotification.TunableFactory().default(sim, text=lambda **_: LocalizationHelperTuning.get_raw_text(text), title=lambda **_: LocalizationHelperTuning.get_raw_text(title))
+    notification.show_dialog(icon_override=(None, sim))
