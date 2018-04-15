@@ -67,6 +67,7 @@ def mp_chat(target_id = None, _connection = None):
 
         inputs = AttributeDict({'dialog': text_input_1})
         dialog = UiDialogTextInputOkCancel.TunableFactory().default(client.active_sim, text=localized_text, title=localized_title, text_inputs=inputs, is_special_dialog=True)
+        output("chat", "Dialog id: {}".format(dialog.dialog_id))
         dialog.add_listener(enter_dialog_callback)
         dialog.show_dialog()
     except Exception as e:
