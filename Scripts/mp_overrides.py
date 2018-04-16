@@ -14,6 +14,8 @@ from objects import ALL_HIDDEN_REASONS
 from distributor.ops import GenericProtocolBufferOp
 from protocolbuffers.DistributorOps_pb2 import Operation
 import distributor.ops
+import clock
+from clock import ClockSpeedMode, GameSpeedChangeSource
 
 def get_first_client(self): 
     # Get the original client instead of the stand-in client. Just in-case some EA code is finnicky with multiple clients. Only supports one
@@ -45,7 +47,7 @@ def on_add(self):
     #We override the on_add function of the clients so we can add the stand-in client at the same time. Only supports  one
     #multiplayer client at the moment, which has the id of 1000.
     if self.id != 1000:
-        account = server.account.Account(865431, "Azura")
+        account = server.account.Account(865431, "Abidoang")
         new_client = services.client_manager().create_client(1000, account, 0)
     for sim_info in self._selectable_sims:
         new_client._selectable_sims.add_selectable_sim_info(sim_info)
@@ -146,6 +148,17 @@ def distribute_dialog(self, dialog_type, dialog_msg, immediate=False):
         output("events", "{}".format(dialog_msg.owner_id))
     except Exception as e:
         pass
+
+def push_speed(self, speed, source=GameSpeedChangeSource.GAMEPLAY, validity_check=None, reason='', immediate=False):
+    if source == GameSpeedChangeSource.GAMEPLAY:
+        request = self.speed_controllers[source].push_speed(speed, reason=str(reason), validity_check=validity_check)
+        self._update_speed(immediate=immediate)
+        return request
+    else:
+        return None
+        
+        
+        
 if not is_client:
     server.clientmanager.ClientManager.get_first_client = get_first_client
     server.clientmanager.ClientManager.get_first_client_id = get_first_client_id
@@ -156,4 +169,5 @@ if not is_client:
 
     server.client.Client.send_selectable_sims_update = send_selectable_sims_update
     ui.ui_dialog.UiDialogBase.distribute_dialog = distribute_dialog
+    clock.GameClock.push_speed = push_speed
     # ui.ui_dialog_service.UiDialogueService.dialog_show = dialog_show
