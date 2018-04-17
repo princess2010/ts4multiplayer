@@ -7,11 +7,20 @@ import services
 from sims4.localization import LocalizationHelperTuning
 from ui.ui_dialog_generic import UiDialogTextInputOkCancel
 from sims4.collections import AttributeDict, FrozenAttributeDict
-from mp_essential import show_notif
 from ui.ui_text_input import UiTextInput
 from sims4.tuning.tunable import AutoFactoryInit, HasTunableSingletonFactory
 from distributor.system import Distributor
 from mp import output_irregardelessly  as output
+
+import sims4
+from sims4.localization import LocalizationHelperTuning
+from ui.ui_dialog_notification import UiDialogNotification
+from distributor.system import Distributor
+def show_notif(sim, text):
+    title = "{} said".format(Distributor.instance().get_distributor_with_active_sim_matching_sim_id(sim.id).client._account.persona_name)
+    notification = UiDialogNotification.TunableFactory().default(sim, text=lambda **_: LocalizationHelperTuning.get_raw_text(text), title=lambda **_: LocalizationHelperTuning.get_raw_text(title))
+    notification.show_dialog(icon_override=(None, sim))
+
 def csn_show_usage(output):
     output("usage: rename [OldFirst OldLast]")
 

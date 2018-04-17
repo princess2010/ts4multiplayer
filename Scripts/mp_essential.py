@@ -156,12 +156,3 @@ def server_sync():
         incoming_commands.remove(command)
   output("locks", "releasing incoming lock")
 
-import services
-import sims4
-from sims4.localization import LocalizationHelperTuning
-from ui.ui_dialog_notification import UiDialogNotification
-from distributor.system import Distributor
-def show_notif(sim, text):
-    title = "{} said".format(Distributor.instance().get_distributor_with_active_sim_matching_sim_id(sim.id).client._account.persona_name)
-    notification = UiDialogNotification.TunableFactory().default(sim, text=lambda **_: LocalizationHelperTuning.get_raw_text(text), title=lambda **_: LocalizationHelperTuning.get_raw_text(title))
-    notification.show_dialog(icon_override=(None, sim))
