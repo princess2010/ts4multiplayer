@@ -7,14 +7,16 @@ import sys
 from update import output 
 from mp_essential import incoming_commands, outgoing_commands
 from mp_essential import incoming_lock, outgoing_lock
-
+from config import host, port
 from networking import generic_send_loop, generic_listen_loop
 class Client:
     def __init__(self):
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         self.serversocket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        self.host =  "192.168.1.23"                    
-        self.port = 9999       
+        self.host = host                    
+        self.port = port     
+        # self.host = "192.168.1.23"
+        # self.port = 9999
         self.connected = False
 
     def listen(self):
