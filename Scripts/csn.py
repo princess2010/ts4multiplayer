@@ -7,7 +7,7 @@ import services
 from sims4.localization import LocalizationHelperTuning
 from ui.ui_dialog_generic import UiDialogTextInputOkCancel
 from sims4.collections import AttributeDict, FrozenAttributeDict
-import mp_essential
+from mp_essential import show_notif
 from ui.ui_text_input import UiTextInput
 from sims4.tuning.tunable import AutoFactoryInit, HasTunableSingletonFactory
 from distributor.system import Distributor
@@ -45,7 +45,7 @@ def mp_chat(target_id = None, _connection = None):
                 client = distributor.client
                 output("chat", 'Showing message')
 
-                mp_essential.show_notif(client.active_sim, dialog_text)
+                show_notif(client.active_sim, dialog_text)
 
         localized_title = lambda **_: LocalizationHelperTuning.get_raw_text("Say Something")
         localized_text = lambda **_: LocalizationHelperTuning.get_raw_text("Say something to anybody who's listening.")
