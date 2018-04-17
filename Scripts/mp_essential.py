@@ -28,6 +28,22 @@ class File:
         self.file_name = file_name
         self.file_contents = file_contents
         
+command_functions ={
+                    "has_choices", has_choices,
+                    "generate_choices",  generate_choices,
+                    "generate_phone_choices", generate_phone_choices,
+                    "select_choice", select_choice,
+                    "cancel_mixer_interaction", cancel_mixer_interaction,
+                    "cancel_super_interaction", cancel_super_interaction,
+                    "push_interaction", push_interaction,
+                    "set_speed", set_speed, 
+                    "set_active_sim", set_active_sim,
+                    "mp_chat", mp_chat,
+                    "ui_dialog_respond", ui_dialog_respond,
+                    "ui_dialog_pick_result", ui_dialog_pick_result,
+                    "ui_dialog_text_input", ui_dialog_text_input}
+
+        
         
 def parse_arg(arg):
     #Horrible, hacky way of parsing arguments from the client commands.
@@ -90,6 +106,15 @@ def client_sync():
 
 regex = re.compile('[a-zA-Z]')
 
+def do_command(command_name, *args):
+    command_exists = command_name in command_functions
+    if command_exists:
+        command_functions[command_name](command_name, *args)
+        output_irregardelessly("commands", "There is a command named: {}. Executing it.".format(command_name))
+
+    else:
+        output_irregardelessly("commands", "There is no such command named: {}!".format(command_name))
+    return 
 def server_sync():
   output("locks", "acquiring incoming lock 1")
   with incoming_lock:
@@ -125,7 +150,7 @@ def server_sync():
                     pending_commands[function_name].append(client_id)
         output_irregardelessly('arg_handler', str(function_to_execute) )
         try:
-            exec(function_to_execute)
+            do_command(function_name, parsed_args)
         except:
             output("Execution Errors", "Something happened")
         incoming_commands.remove(command)
