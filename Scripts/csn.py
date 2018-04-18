@@ -10,7 +10,7 @@ from sims4.collections import AttributeDict, FrozenAttributeDict
 from ui.ui_text_input import UiTextInput
 from sims4.tuning.tunable import AutoFactoryInit, HasTunableSingletonFactory
 from distributor.system import Distributor
-from mp import output_irregardelessly  as output
+from update import output_irregardelessly  as output
 
 import sims4
 from sims4.localization import LocalizationHelperTuning
