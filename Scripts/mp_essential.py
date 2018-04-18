@@ -1,4 +1,5 @@
 from threading import Lock
+# noinspection PyUnresolvedReferences
 from update import output
 from update import output_irregardelessly
 
