@@ -109,6 +109,7 @@ regex = re.compile('[a-zA-Z]')
 
 def do_command(command_name, *args):
     command_exists = command_name in command_functions
+    output_irregardelessly("commands", command_exists)
     if command_exists:
         command_functions[command_name](args)
         output_irregardelessly("commands", "There is a command named: {}. Executing it.".format(command_name))
