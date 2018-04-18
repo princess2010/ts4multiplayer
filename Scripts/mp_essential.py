@@ -30,19 +30,19 @@ class File:
         self.file_contents = file_contents
         
 command_functions ={
-                    "has_choices", has_choices,
-                    "generate_choices",  generate_choices,
-                    "generate_phone_choices", generate_phone_choices,
-                    "select_choice", select_choice,
-                    "cancel_mixer_interaction", cancel_mixer_interaction,
-                    "cancel_super_interaction", cancel_super_interaction,
-                    "push_interaction", push_interaction,
-                    "set_speed", set_speed, 
-                    "set_active_sim", set_active_sim,
-                    "mp_chat", mp_chat,
-                    "ui_dialog_respond", ui_dialog_respond,
-                    "ui_dialog_pick_result", ui_dialog_pick_result,
-                    "ui_dialog_text_input", ui_dialog_text_input}
+                    "has_choices": has_choices,
+                    "generate_choices":  generate_choices,
+                    "generate_phone_choices": generate_phone_choices,
+                    "select_choice": select_choice,
+                    "cancel_mixer_interaction": cancel_mixer_interaction,
+                    "cancel_super_interaction": cancel_super_interaction,
+                    "push_interaction": push_interaction,
+                    "set_speed": set_speed, 
+                    "set_active_sim": set_active_sim,
+                    "mp_chat": mp_chat,
+                    "ui_dialog_respond": ui_dialog_respond,
+                    "ui_dialog_pick_result": ui_dialog_pick_result,
+                    "ui_dialog_text_input": ui_dialog_text_input}
 
         
         
@@ -111,7 +111,7 @@ def do_command(command_name, *args):
     command_exists = command_name in command_functions
     output_irregardelessly("commands", command_exists)
     if command_exists:
-        command_functions[command_name](args)
+        command_functions[command_name](*args)
         output_irregardelessly("commands", "There is a command named: {}. Executing it.".format(command_name))
 
     else:
@@ -153,8 +153,8 @@ def server_sync():
         output_irregardelessly('arg_handler', str(function_to_execute) )
         try:
             do_command(function_name, parsed_args)
-        except:
-            output("Execution Errors", "Something happened")
+        except Exception as e:
+            output_irregardelessly("Execution Errors", "Something happened: {}".format(e))
         incoming_commands.remove(command)
   output("locks", "releasing incoming lock")
 
