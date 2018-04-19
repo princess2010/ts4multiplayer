@@ -152,7 +152,7 @@ def server_sync():
                     pending_commands[function_name].append(client_id)
         output_irregardelessly('arg_handler', str(function_to_execute) )
         try:
-            do_command(function_name, parsed_args)
+            do_command(function_name, *parsed_args)
         except Exception as e:
             output_irregardelessly("Execution Errors", "Something happened: {}".format(e))
         incoming_commands.remove(command)
