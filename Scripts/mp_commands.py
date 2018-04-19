@@ -143,6 +143,17 @@ def change_persona(_connection = None):
     client = services.client_manager().get_first_client()
     client._account._persona_name = "Corrin"
     output(client._account._persona_name)
+    
+    
+@sims4.commands.Command('change_persona_client', command_type=sims4.commands.CommandType.Live)
+
+def change_persona_client(name, _connection = None):
+    output = sims4.commands.CheatOutput(_connection) 
+    # output("working")
+    client_manager = services.client_manager()
+    client = client_manager.get(1000)
+    client._account._persona_name = name
+    output(client._account._persona_name)
 import injector, zone
 from event_testing import test_events
 
