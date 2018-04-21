@@ -8,7 +8,7 @@ import services
 from pending_client_commands import pending_commands_lock, pendable_functions, pending_commands
 
 from server_commands.interaction_commands import has_choices, generate_choices, generate_phone_choices,  select_choice, cancel_mixer_interaction, cancel_super_interaction, push_interaction
-from server_commands.clock_commands import set_speed
+from server_commands.clock_commands import set_speed, request_pause, unrequest_pause
 from server_commands.sim_commands import set_active_sim
 from server_commands.ui_commands import ui_dialog_respond, ui_dialog_pick_result, ui_dialog_text_input
 from csn import mp_chat
@@ -42,7 +42,9 @@ command_functions ={
                     "mp_chat": mp_chat,
                     "ui_dialog_respond": ui_dialog_respond,
                     "ui_dialog_pick_result": ui_dialog_pick_result,
-                    "ui_dialog_text_input": ui_dialog_text_input}
+                    "ui_dialog_text_input": ui_dialog_text_input,
+                    'request_pause' : request_pause,
+                    'unrequest_pause' : unrequest_pause}
 
         
         

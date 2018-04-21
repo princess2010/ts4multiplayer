@@ -5,7 +5,7 @@ from mp_essential import server_sync, client_sync, Message
 
 import sims4, services
 from server_commands.interaction_commands import has_choices, generate_choices, generate_phone_choices,  select_choice, cancel_mixer_interaction, cancel_super_interaction, push_interaction
-from server_commands.clock_commands import set_speed
+from server_commands.clock_commands import set_speed, request_pause, unrequest_pause
 from server_commands.sim_commands import set_active_sim
 from server_commands.ui_commands import ui_dialog_respond, ui_dialog_pick_result, ui_dialog_text_input
 import server.client as client
@@ -33,7 +33,11 @@ command_names = ['interactions.has_choices',
                                       "mp_chat",
                                       "ui.dialog.respond",
                                       'ui.dialog.pick_result',
-                                      'ui.dialog.text_input']
+                                      'ui.dialog.text_input',
+                                      "clock.request_pause",
+                                       'clock.pause',
+                                       'clock.unrequest_pause',
+                                       'clock.unpause']
            
                                       
 functions= [has_choices,
@@ -48,22 +52,13 @@ functions= [has_choices,
                     mp_chat,
                     ui_dialog_respond,
                     ui_dialog_pick_result,
-                    ui_dialog_text_input]
+                    ui_dialog_text_input,
+                    request_pause,
+                    request_pause,
+                    unrequest_pause,
+                    unrequest_pause]
 
            
-function_names = ["has_choices",
-                    "generate_choices",
-                    "generate_phone_choices",
-                    "select_choice",
-                    "cancel_mixer_interaction",
-                    "cancel_super_interaction",
-                    "push_interaction",
-                    "set_speed",
-                    "set_active_sim",
-                    "mp_chat",
-                    "ui_dialog_respond",
-                    "ui_dialog_pick_result",
-                    "ui_dialog_text_input"]
 
 
 def send_message_server(self, msg_id, msg):
