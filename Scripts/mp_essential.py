@@ -11,6 +11,8 @@ from server_commands.interaction_commands import has_choices, generate_choices, 
 from server_commands.clock_commands import set_speed, request_pause, unrequest_pause, toggle_pause_unpause
 from server_commands.sim_commands import set_active_sim
 from server_commands.ui_commands import ui_dialog_respond, ui_dialog_pick_result, ui_dialog_text_input
+from server_commands.lighting_commands import set_color_and_intensity
+
 from csn import mp_chat
 from config import user_directory
 incoming_commands = []
@@ -45,7 +47,8 @@ command_functions ={
                     "ui_dialog_text_input": ui_dialog_text_input,
                     'request_pause' : request_pause,
                     'unrequest_pause' : unrequest_pause,
-                    'toggle_pause_unpause' : toggle_pause_unpause}
+                    'toggle_pause_unpause' : toggle_pause_unpause,
+                    "set_color_and_intensity" : set_color_and_intensity}
 
         
         
