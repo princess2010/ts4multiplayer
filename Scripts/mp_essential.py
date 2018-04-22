@@ -14,7 +14,7 @@ from server_commands.ui_commands import ui_dialog_respond, ui_dialog_pick_result
 from server_commands.lighting_commands import set_color_and_intensity
 
 from csn import mp_chat
-from config import user_directory
+from mp_utils import get_current_user_directory
 incoming_commands = []
 outgoing_commands = []
 
@@ -71,7 +71,7 @@ def parse_arg(arg):
     return new_arg
     
 def get_file_matching_name(name):
-    for root, dirs, files in os.walk("{}/saves/scratch".format(user_directory.replace("Mods/Heuristics/Scripts/", ""))):
+    for root, dirs, files in os.walk("{}/saves/scratch".format(get_current_user_directory().replace("Mods/Heuristics/Scripts/", ""))):
         for file_name in files:
             replaced = file_name.replace("zoneObjects-", "").replace("-6.sav", "").strip()
             replaced = replaced[1:]

@@ -2,7 +2,6 @@ from update import output_irregardelessly as output
 import services, sims4
 import server.clientmanager
 import distributor.system
-from config import user_directory
 
 @sims4.commands.Command('get_con', command_type=sims4.commands.CommandType.Live)
 def get_con(_connection=None):
