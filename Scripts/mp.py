@@ -5,7 +5,7 @@ from mp_utils import get_current_user_directory
 try:
     is_client = False
     try:
-        open("{}client".format(get_current_user_directory()), "rb")
+        open("{}client.txt".format(get_current_user_directory()), "rb")
         is_client = True
         
     except Exception:

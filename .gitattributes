@@ -1,1 +1,2 @@
-*.* text eol=lf
+*.txt eol=crlf
+*.py eol=crlf
