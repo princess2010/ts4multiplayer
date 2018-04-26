@@ -1,9 +1,9 @@
 import socket
 import threading
 
-from log import ts4mp_log_debug
-from mp_essential import outgoing_lock, outgoing_commands
-from networking import generic_send_loop, generic_listen_loop
+from ts4mp.debug.log import ts4mp_log
+from ts4mp.core.mp_essential import outgoing_lock, outgoing_commands
+from ts4mp.core.networking import generic_send_loop, generic_listen_loop
 
 
 class Server:
@@ -24,14 +24,14 @@ class Server:
     def send_loop(self):
         while True:
             if self.clientsocket is not None:
-                ts4mp_log_debug("locks", "acquiring outgoing lock")
+                ts4mp_log("locks", "acquiring outgoing lock")
 
                 with outgoing_lock:
                     for data in outgoing_commands:
                         generic_send_loop(data, self.clientsocket)
                         outgoing_commands.remove(data)
 
-                ts4mp_log_debug("locks", "releasing outgoing lock")
+                ts4mp_log("locks", "releasing outgoing lock")
 
             # time.sleep(1)
 
@@ -41,7 +41,7 @@ class Server:
         self.serversocket.listen(5)
         self.clientsocket, address = self.serversocket.accept()
 
-        ts4mp_log_debug("network", "Client Connect")
+        ts4mp_log("network", "Client Connect")
 
         clientsocket = self.clientsocket
         size = None

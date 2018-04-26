@@ -16,9 +16,9 @@ from objects import ALL_HIDDEN_REASONS
 from protocolbuffers import Sims_pb2
 from protocolbuffers.DistributorOps_pb2 import Operation
 
-import system_distributor
-from log import ts4mp_log_debug
-from mp import is_client
+from ts4mp.core.overrides import system_distributor
+from ts4mp.debug.log import ts4mp_log
+from ts4mp.core.mp import is_client
 
 
 def get_first_client(self):
@@ -138,7 +138,7 @@ def distribute_dialog(self, dialog_type, dialog_msg, immediate=False):
     distributor_instance.add_event_for_client(distributor_to_send_to, dialog_type, dialog_msg, immediate)
 
     if dialog_msg:
-        ts4mp_log_debug("events", "{}".format(str(dialog_msg.owner_id)))
+        ts4mp_log("events", "{}".format(str(dialog_msg.owner_id)))
 
 
 def push_speed(self, speed, source=GameSpeedChangeSource.GAMEPLAY, validity_check=None, reason='', immediate=False):

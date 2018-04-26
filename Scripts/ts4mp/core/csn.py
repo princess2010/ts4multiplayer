@@ -10,7 +10,7 @@ from ui.ui_dialog_notification import UiDialogNotification
 from ui.ui_text_input import UiTextInput
 
 # TODO: Complete overhaul and streamlined L18N support
-from log import ts4mp_log_debug
+from ts4mp.debug.log import ts4mp_log
 
 
 def show_notif(sim, text):
@@ -33,22 +33,22 @@ def mp_chat(target_id=None, _connection=None):
     try:
         target_id = int(target_id)
 
-        ts4mp_log_debug("chat", target_id)
+        ts4mp_log("chat", target_id)
         distributor = Distributor.instance().get_distributor_with_active_sim_matching_sim_id(target_id)
 
         client = distributor.client
-        ts4mp_log_debug("chat", client)
+        ts4mp_log("chat", client)
 
         def enter_dialog_callback(dialog):
             if not dialog.accepted:
                 return
             dialog_text = dialog.text_input_responses.get("dialog")
-            ts4mp_log_debug("chat", 'Showing message')
+            ts4mp_log("chat", 'Showing message')
 
             distributor = Distributor.instance().get_distributor_with_active_sim_matching_sim_id(target_id)
             if distributor is not None:
                 client = distributor.client
-                ts4mp_log_debug("chat", 'Showing message')
+                ts4mp_log("chat", 'Showing message')
 
                 show_notif(client.active_sim, dialog_text)
 
@@ -66,8 +66,8 @@ def mp_chat(target_id=None, _connection=None):
 
         inputs = AttributeDict({'dialog': text_input_1})
         dialog = UiDialogTextInputOkCancel.TunableFactory().default(client.active_sim, text=localized_text, title=localized_title, text_inputs=inputs, is_special_dialog=True)
-        ts4mp_log_debug("chat", "Dialog id: {}".format(dialog.dialog_id))
+        ts4mp_log("chat", "Dialog id: {}".format(dialog.dialog_id))
         dialog.add_listener(enter_dialog_callback)
         dialog.show_dialog()
     except Exception as e:
-        ts4mp_log_debug('chat', e)
+        ts4mp_log('chat', e)

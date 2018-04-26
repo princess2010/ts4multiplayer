@@ -2,7 +2,7 @@ import services
 from sims.sim import Sim
 from sims4.resources import Types
 
-from injector import inject
+from ts4mp.utils.native.injector import inject
 
 TS4MP_AFFORDANCES = (
     15046892415517235728,  # simmy_chatdialog_4162018

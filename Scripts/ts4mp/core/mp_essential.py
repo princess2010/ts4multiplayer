@@ -10,10 +10,10 @@ from server_commands.lighting_commands import set_color_and_intensity
 from server_commands.sim_commands import set_active_sim
 from server_commands.ui_commands import ui_dialog_respond, ui_dialog_pick_result, ui_dialog_text_input
 
-from csn import mp_chat
-from log import ts4mp_log_debug
-from mp_utils import get_sims_documents_directory
-from pending_client_commands import pending_commands_lock, pendable_functions, pending_commands
+from ts4mp.core.csn import mp_chat
+from ts4mp.debug.log import ts4mp_log
+from ts4mp.core.mp_utils import get_sims_documents_directory
+from ts4mp.core.pending_client_commands import pending_commands_lock, pendable_functions, pending_commands
 
 ALPHABETIC_REGEX = re.compile('[a-zA-Z]')
 
@@ -37,7 +37,7 @@ PERFORM_COMMAND_FUNCTIONS = {
     "set_color_and_intensity" : set_color_and_intensity,
 }
 
-# TODO: Consider havinga class that holds these instead of them being out in the open
+# TODO: Consider having a class that holds these instead of them being out in the open
 incoming_commands = list()
 outgoing_commands = list()
 
@@ -69,7 +69,7 @@ def get_file_matching_name(name):
             replaced = file_name.replace("zoneObjects-", "").replace("-6.sav", "").strip()
             replaced = replaced[1:]
 
-            ts4mp_log_debug("zone_id", "{} , {}".format(replaced, name))
+            ts4mp_log("zone_id", "{} , {}".format(replaced, name))
 
             if name == replaced:
                 file_path = str(os.path.join(root, file_name))
@@ -80,12 +80,12 @@ def get_file_matching_name(name):
 
 # TODO: Any kind of documentation for any of this so it's easier to understand in a year?
 def client_sync():
-    ts4mp_log_debug("locks", "acquiring incoming lock 1")
+    ts4mp_log("locks", "acquiring incoming lock 1")
 
     with incoming_lock:
         global incoming_commands
 
-        ts4mp_log_debug("receive", "{} \n".format(len(incoming_commands)))
+        ts4mp_log("receive", "{} \n".format(len(incoming_commands)))
 
         client_manager = services.client_manager()
         client = None
@@ -110,11 +110,11 @@ def client_sync():
 
                 incoming_commands.remove(unpacked_msg_data)
 
-    ts4mp_log_debug("locks", "releasing incoming lock")
+    ts4mp_log("locks", "releasing incoming lock")
 
 
 def server_sync():
-    ts4mp_log_debug("locks", "acquiring incoming lock 1")
+    ts4mp_log("locks", "acquiring incoming lock 1")
 
     with incoming_lock:
         global incoming_commands
@@ -145,7 +145,7 @@ def server_sync():
             function_to_execute = "{}({})".format(function_name, str(parsed_args).replace('[', '').replace(']', ''))
             function_name = function_name.strip()
 
-            ts4mp_log_debug("client_specific", "New function called {} recieved".format(function_name))
+            ts4mp_log("client_specific", "New function called {} recieved".format(function_name))
 
             if function_name in pendable_functions:
                 with pending_commands_lock:
@@ -154,16 +154,16 @@ def server_sync():
                     if client_id not in pending_commands[function_name]:
                         pending_commands[function_name].append(client_id)
 
-            ts4mp_log_debug('arg_handler', str(function_to_execute))
+            ts4mp_log('arg_handler', str(function_to_execute))
 
             try:
                 _do_command(function_name, parsed_args)
             except:
-                ts4mp_log_debug("Execution Errors", "Something happened")
+                ts4mp_log("Execution Errors", "Something happened")
 
             incoming_commands.remove(command)
 
-    ts4mp_log_debug("locks", "releasing incoming lock")
+    ts4mp_log("locks", "releasing incoming lock")
 
 
 def _do_command(command_name, *args):
@@ -172,9 +172,9 @@ def _do_command(command_name, *args):
     if command_name in PERFORM_COMMAND_FUNCTIONS:
         PERFORM_COMMAND_FUNCTIONS[command_name](args)
 
-        ts4mp_log_debug("commands", "There is a command named: {}. Executing it.".format(command_name))
+        ts4mp_log("commands", "There is a command named: {}. Executing it.".format(command_name))
     else:
-        ts4mp_log_debug("commands", "There is no such command named: {}!".format(command_name))
+        ts4mp_log("commands", "There is no such command named: {}!".format(command_name))
 
 
 def _parse_arg(argument):
@@ -186,6 +186,6 @@ def _parse_arg(argument):
     except ValueError:
         pass
 
-    ts4mp_log_debug("arg_handler", str(argument) + "\n")
+    ts4mp_log("arg_handler", str(argument) + "\n")
 
     return argument
