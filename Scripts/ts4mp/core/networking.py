@@ -2,8 +2,8 @@ import pickle
 import sys
 from struct import unpack, pack
 
-from log import ts4mp_log_debug
-from mp_essential import incoming_lock
+from ts4mp.debug.log import ts4mp_log
+from ts4mp.core.mp_essential import incoming_lock
 
 
 def generic_send_loop(data, socket):
@@ -27,12 +27,12 @@ def generic_listen_loop(socket, recieved_commands, data, size):
     elif size == sys.getsizeof(data):
         data = pickle.loads(data)
 
-        ts4mp_log_debug("locks", "acquiring incoming lock")
+        ts4mp_log("locks", "acquiring incoming lock")
 
         with incoming_lock:
             recieved_commands.append(data)
 
-        ts4mp_log_debug("locks", "releasing incoming lock")
+        ts4mp_log("locks", "releasing incoming lock")
 
         size = None
         data = b''

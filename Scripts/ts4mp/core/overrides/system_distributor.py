@@ -12,8 +12,8 @@ from protocolbuffers.Consts_pb2 import MSG_OBJECTS_VIEW_UPDATE
 from server.client import Client
 from sims4.callback_utils import consume_exceptions
 
-from log import ts4mp_log_debug
-from pending_client_commands import get_command_function_from_pb, try_get_client_id_of_pending_command, remove_earliest_command_client
+from ts4mp.debug.log import ts4mp_log
+from ts4mp.core.pending_client_commands import get_command_function_from_pb, try_get_client_id_of_pending_command, remove_earliest_command_client
 
 
 class SystemDistributor:
@@ -159,13 +159,13 @@ class SystemDistributor:
             logger.error('Could not add event {0} because there are no attached clients', msg_id)
             return
 
-        ts4mp_log_debug("client_specific", "Trying to add an event to a client.")
+        ts4mp_log("client_specific", "Trying to add an event to a client.")
         function_name = get_command_function_from_pb(msg_id)
-        ts4mp_log_debug("client_specific", "Function is {}".format(function_name))
+        ts4mp_log("client_specific", "Function is {}".format(function_name))
 
         if function_name is not None:
             client_id = try_get_client_id_of_pending_command(function_name)
-            ts4mp_log_debug("client_specific", "Client is {}".format(client_id))
+            ts4mp_log("client_specific", "Client is {}".format(client_id))
 
             if client_id is not None:
                 remove_earliest_command_client(function_name)
@@ -173,10 +173,10 @@ class SystemDistributor:
 
                 if target_client is not None:
                     target_client.add_event(msg_id, msg, immediate)
-                    ts4mp_log_debug("client_specific", "Adding event to client")
+                    ts4mp_log("client_specific", "Adding event to client")
                     return
 
-        ts4mp_log_debug("client_specific", "No suitable client found, so I'm just going to send it to everybody")
+        ts4mp_log("client_specific", "No suitable client found, so I'm just going to send it to everybody")
         self.events.append((msg_id, msg))
 
         if immediate:
@@ -184,7 +184,7 @@ class SystemDistributor:
 
     def add_event_for_client(self, client, msg_id, msg, immediate):
         client.add_event(msg_id, msg, immediate)
-        ts4mp_log_debug("events", "Sending msg with id {} to client {}".format(msg_id, client.client.id))
+        ts4mp_log("events", "Sending msg with id {} to client {}".format(msg_id, client.client.id))
 
     def process(self):
         for client_distributor in self.client_distributors:
@@ -223,7 +223,7 @@ class SystemDistributor:
     def get_distributor_with_active_sim_matching_sim_id(self, sim_id):
         for client_distributor in self.client_distributors:
             if client_distributor.client.active_sim is not None:
-                ts4mp_log_debug("chat", "Active client sim id: {}".format(client_distributor.client.active_sim.id))
+                ts4mp_log("chat", "Active client sim id: {}".format(client_distributor.client.active_sim.id))
 
                 if client_distributor.client.active_sim.id == sim_id:
                     return client_distributor

@@ -3,7 +3,7 @@ import services
 import sims4.commands
 import sims4.math
 
-from log import ts4mp_log_debug
+from ts4mp.debug.log import ts4mp_log
 
 
 @sims4.commands.Command('plum', command_type=sims4.commands.CommandType.Live)
@@ -25,4 +25,4 @@ def create_plumbbob(_connection=None):
 
         plumbob_object.set_parent(sim_instance)
     except Exception as e:
-        ts4mp_log_debug("plumb", e)
+        ts4mp_log("plumb", e)

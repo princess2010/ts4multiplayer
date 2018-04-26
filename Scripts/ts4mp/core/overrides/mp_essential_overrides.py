@@ -9,12 +9,12 @@ from server_commands.sim_commands import set_active_sim
 from server_commands.ui_commands import ui_dialog_respond, ui_dialog_pick_result, ui_dialog_text_input
 from sims4 import core_services
 
-from csn import mp_chat
-from decorator import decorator
-from log import ts4mp_log_debug
-from mp import is_client
-from mp_essential import Message, outgoing_lock, outgoing_commands, client_sync, server_sync
-from undecorated import undecorated
+from ts4mp.core.csn import mp_chat
+from ts4mp.utils.native.decorator import decorator
+from ts4mp.debug.log import ts4mp_log
+from ts4mp.core.mp import is_client
+from ts4mp.core.mp_essential import Message, outgoing_lock, outgoing_commands, client_sync, server_sync
+from ts4mp.utils.native.undecorated import undecorated
 
 COMMAND_FUNCTIONS = {
     'interactions.has_choices'        : has_choices,
@@ -52,13 +52,13 @@ def send_message_server(self, msg_id, msg):
     else:
         message = Message(msg_id, msg.SerializeToString())
 
-        ts4mp_log_debug("locks", "acquiring outgoing lock")
+        ts4mp_log("locks", "acquiring outgoing lock")
 
         # We use a lock here because outgoing_commands is also being altered by the client socket thread.
         with outgoing_lock:
             outgoing_commands.append(message)
 
-        ts4mp_log_debug("locks", "releasing outgoing lock")
+        ts4mp_log("locks", "releasing outgoing lock")
 
 
 def send_message_client(self, msg_id, msg):
@@ -75,11 +75,11 @@ def wrapper_client(func, *args, **kwargs):
     # For example, selecting a choice from the pie menu.
     # Only supports one multiplayer client at the moment.
 
-    ts4mp_log_debug("locks", "acquiring outgoing lock")
+    ts4mp_log("locks", "acquiring outgoing lock")
 
     with outgoing_lock:
         # TODO: You should not be referring to a global variable that is in a different module
-        ts4mp_log_debug("arg_handler", "\n" + str(func.__name__) + ", " + str(args) + "  " + str(kwargs))
+        ts4mp_log("arg_handler", "\n" + str(func.__name__) + ", " + str(args) + "  " + str(kwargs))
         outgoing_commands.append("\n" + str(func.__name__) + ", " + str(args) + "  " + str(kwargs))
 
         def do_nothing():
