@@ -29,7 +29,7 @@ class SystemDistributor:
 
     @property
     def client(self):
-        first_client_distributor = next(iter(self.client_distributors))
+        first_client_distributor = next(iter(self.client_distributors), None)
         if first_client_distributor is not None:
            return first_client_distributor.client
         else:
