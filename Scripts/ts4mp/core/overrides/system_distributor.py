@@ -29,7 +29,11 @@ class SystemDistributor:
 
     @property
     def client(self):
-        return next(iter(self.client_distributors)).client
+        first_client_distributor = next(iter(self.client_distributors))
+        if first_client_distributor is not None:
+           return first_client_distributor.client
+        else:
+            return None
 
     @contextmanager
     def dependent_block(self):
