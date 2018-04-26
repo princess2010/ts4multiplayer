@@ -1,60 +1,54 @@
-import socket                                         
-import pickle
-from struct import unpack, pack
+import socket
 import threading
-import time
-import sys
+
+from log import ts4mp_log_debug
+from mp_essential import outgoing_lock, outgoing_commands
 from networking import generic_send_loop, generic_listen_loop
-import update
-import mp
-from update import output, output_irregardelessly
-from mp_essential import incoming_commands, outgoing_commands
-from mp_essential import incoming_lock, outgoing_lock
-
-
 
 
 class Server:
     def __init__(self):
-        self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+        self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.serversocket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        self.host =  ""                    
-        self.port = 9999                                           
-        self.serversocket.bind((self.host, self.port))     
+        self.host = ""
+        self.port = 9999
+        self.serversocket.bind((self.host, self.port))
         self.clientsocket = None
 
     def listen(self):
-        threading.Thread(target = self.listen_loop, args = []).start()
+        threading.Thread(target=self.listen_loop, args=[]).start()
 
     def send(self):
-        threading.Thread(target = self.send_loop, args = []).start()
-        
+        threading.Thread(target=self.send_loop, args=[]).start()
+
     def send_loop(self):
         while True:
             if self.clientsocket is not None:
-                output("locks", "acquiring outgoing lock")
+                ts4mp_log_debug("locks", "acquiring outgoing lock")
 
                 with outgoing_lock:
                     for data in outgoing_commands:
                         generic_send_loop(data, self.clientsocket)
                         outgoing_commands.remove(data)
 
-                output("locks", "releasing outgoing lock")
+                ts4mp_log_debug("locks", "releasing outgoing lock")
+
             # time.sleep(1)
 
     def listen_loop(self):
         global incoming_commands
+
         self.serversocket.listen(5)
-        self.clientsocket,address = self.serversocket.accept()  
-        output_irregardelessly("network", "Client Connect")
+        self.clientsocket, address = self.serversocket.accept()
+
+        ts4mp_log_debug("network", "Client Connect")
 
         clientsocket = self.clientsocket
-        
-        size = None 
+        size = None
         data = b''
-        
+
         while True:
             # output_irregardelessly("network", "Server Listen Update")
+            # TODO: Is this supposed to override the global variable? It's really unclear
             incoming_commands, data, size = generic_listen_loop(clientsocket, incoming_commands, data, size)
             # time.sleep(1)
-
