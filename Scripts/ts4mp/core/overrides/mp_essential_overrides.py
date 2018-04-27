@@ -8,6 +8,8 @@ from server_commands.lighting_commands import set_color_and_intensity
 from server_commands.sim_commands import set_active_sim
 from server_commands.ui_commands import ui_dialog_respond, ui_dialog_pick_result, ui_dialog_text_input
 from sims4 import core_services
+import game_services
+
 
 from ts4mp.core.csn import mp_chat
 from ts4mp.utils.native.decorator import decorator
@@ -92,24 +94,44 @@ def wrapper_client(func, *args, **kwargs):
 
 def on_tick_client():
     # On Tick override for the client.
+    # If the service manager hasn't been initialized, return because we don't even have a client manager yet.
     # If we don't have any client, that means we aren't in a zone yet.
     # If we do have at least one client, that means we are in a zone and can sync information.
+    service_manager = game_services.service_manager
+    if service_manager is None:
+        return
+
+    client_manager = services.client_manager()
+
+    if client_manager is None:
+        return
+
+    client = client_manager.get_first_client()
+
+    if client is None:
+        return
 
     client_sync()
 
 
 def on_tick_server():
     # On Tick override for the client.
+    # If the service manager hasn't been initialized, return because we don't even have a client manager yet.
     # If we don't have any client, that means we aren't in a zone yet.
     # If we do have at least one client, that means we are in a zone and can sync information.
+    service_manager = game_services.service_manager
+    if service_manager is None:
+        return
 
     client_manager = services.client_manager()
 
-    if client_manager is not None:
-        client = client_manager.get_first_client()
+    if client_manager is None:
+        return
 
-        if client is None:
-            return
+    client = client_manager.get_first_client()
+
+    if client is None:
+        return
 
     server_sync()
 
