@@ -49,7 +49,7 @@ def _do_command(command_name, *args):
     global PERFORM_COMMAND_FUNCTIONS
 
     if command_name in PERFORM_COMMAND_FUNCTIONS:
-        PERFORM_COMMAND_FUNCTIONS[command_name](args)
+        PERFORM_COMMAND_FUNCTIONS[command_name](*args)
 
         ts4mp_log("commands", "There is a command named: {}. Executing it.".format(command_name))
     else:
