@@ -1,6 +1,7 @@
 import socket
 import threading
 
+import ts4mp
 from ts4mp.debug.log import ts4mp_log
 from ts4mp.core.mp_essential import outgoing_lock, outgoing_commands
 from ts4mp.core.networking import generic_send_loop, generic_listen_loop
@@ -39,7 +40,6 @@ class Client:
             # time.sleep(1)
 
     def listen_loop(self):
-        global incoming_commands
 
         serversocket = self.serversocket
         size = None
@@ -48,6 +48,6 @@ class Client:
         while True:
             if self.connected:
                 # TODO: Is this supposed to override the global variable? It's really unclear
-                incoming_commands, data, size = generic_listen_loop(serversocket, incoming_commands, data, size)
+                ts4mp.core.mp_essential.incoming_commands, data, size = generic_listen_loop(serversocket, ts4mp.core.mp_essential.incoming_commands, data, size)
 
             # time.sleep(1)
