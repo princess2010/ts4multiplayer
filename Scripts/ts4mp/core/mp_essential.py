@@ -45,6 +45,17 @@ outgoing_lock = Lock()
 incoming_lock = Lock()
 
 
+def _do_command(command_name, *args):
+    global PERFORM_COMMAND_FUNCTIONS
+
+    if command_name in PERFORM_COMMAND_FUNCTIONS:
+        PERFORM_COMMAND_FUNCTIONS[command_name](args)
+
+        ts4mp_log("commands", "There is a command named: {}. Executing it.".format(command_name))
+    else:
+        ts4mp_log("commands", "There is no such command named: {}!".format(command_name))
+
+
 # TODO: Less generic names
 class Message:
     def __init__(self, msg_id, msg):
@@ -166,15 +177,6 @@ def server_sync():
     ts4mp_log("locks", "releasing incoming lock")
 
 
-def _do_command(command_name, *args):
-    global PERFORM_COMMAND_FUNCTIONS
-
-    if command_name in PERFORM_COMMAND_FUNCTIONS:
-        PERFORM_COMMAND_FUNCTIONS[command_name](args)
-
-        ts4mp_log("commands", "There is a command named: {}. Executing it.".format(command_name))
-    else:
-        ts4mp_log("commands", "There is no such command named: {}!".format(command_name))
 
 
 def _parse_arg(argument):
