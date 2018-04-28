@@ -2,6 +2,7 @@ import os.path
 
 import sims4.commands
 from sims4 import reload
+from ts4mp.core.mp_utils import get_sims_documents_directory
 
 
 @sims4.commands.Command('ts4mp.reload', command_type=sims4.commands.CommandType.Live)
@@ -9,7 +10,7 @@ def reload_maslow(module: str, _connection=None):
     output = sims4.commands.CheatOutput(_connection)
 
     try:
-        dirname = os.path.dirname(os.path.realpath(__file__))
+        dirname = get_sims_documents_directory()
         filename = os.path.join(dirname, module) + ".py"
 
         output("Reloading {}".format(filename))

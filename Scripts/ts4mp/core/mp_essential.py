@@ -168,9 +168,9 @@ def server_sync():
             ts4mp_log('arg_handler', str(function_to_execute))
 
             try:
-                _do_command(function_name, parsed_args)
-            except:
-                ts4mp_log("Execution Errors", "Something happened")
+                _do_command(function_name, *parsed_args)
+            except Exception as e:
+                ts4mp_log("Execution Errors", str(e))
 
             incoming_commands.remove(command)
 
