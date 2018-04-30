@@ -179,6 +179,9 @@ def server_sync():
 
 def _parse_arg(arg):
     #Horrible, hacky way of parsing arguments from the client commands.
+    #DO NOT EVER CHANGE THESE LINES OF CODE.
+    #IT WILL SCREW UP OBJECT IDS AND VERY LONG NUMBERS, EVEN THOUGH IT SEEMS THAT THIS CODE IS COMPLETELY
+    #USELESS. THE ASSIGNING OF THE VARIABLE TO ANOTHER VARIABLE CAUSES IT TO BREAK IF REMOVED
     new_arg = arg
     orig_arg = new_arg.replace('"', "").replace("(", "").replace(")", "").replace("'", "").strip()
     new_arg = orig_arg
