@@ -177,19 +177,20 @@ def server_sync():
     ts4mp_log("locks", "releasing incoming lock")
 
 
-def _parse_arg(argument):
-    # Horrible, hacky way of parsing arguments from the client commands.
-    argument = argument.replace('"', "").replace("(", "").replace(")", "").replace("'", "").strip()
-
+def parse_arg(arg):
+    #Horrible, hacky way of parsing arguments from the client commands.
+    new_arg = arg
+    orig_arg = new_arg.replace('"', "").replace("(", "").replace(")", "").replace("'", "").strip()
+    new_arg = orig_arg
     try:
-        argument = float(argument)
+        new_arg = float(orig_arg)
 
         try:
-            argument = int(argument)
-        except ValueError:
+            new_arg = int(orig_arg)
+        except BaseException:
             pass
-    except ValueError:
+    except BaseException:
         pass 
     ts4mp_log("arg_handler", str(argument) + "\n", force=True)
 
-    return argument
+    return new_arg
