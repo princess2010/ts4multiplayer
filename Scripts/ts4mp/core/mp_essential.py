@@ -190,6 +190,6 @@ def _parse_arg(argument):
             pass
     except ValueError:
         pass 
-    ts4mp_log("arg_handler", str(argument) + "\n")
+    ts4mp_log("arg_handler", str(argument) + "\n", force=True)
 
     return argument
