@@ -194,6 +194,6 @@ def _parse_arg(arg):
             pass
     except BaseException:
         pass 
-    ts4mp_log("arg_handler", str(new_arg) + "\n", force=True)
+    ts4mp_log("arg_handler", str(new_arg) + "\n", force=False)
 
     return new_arg

@@ -81,7 +81,7 @@ def wrapper_client(func, *args, **kwargs):
 
     with outgoing_lock:
         # TODO: You should not be referring to a global variable that is in a different module
-        ts4mp_log("arg_handler", "\n" + str(func.__name__) + ", " + str(args) + "  " + str(kwargs), force=True)
+        ts4mp_log("arg_handler", "\n" + str(func.__name__) + ", " + str(args) + "  " + str(kwargs), force=False)
         outgoing_commands.append("\n" + str(func.__name__) + ", " + str(args) + "  " + str(kwargs))
 
         def do_nothing():
