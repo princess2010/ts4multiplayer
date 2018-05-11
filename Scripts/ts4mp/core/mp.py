@@ -4,6 +4,7 @@ from ts4mp.core import multiplayer_client, multiplayer_server
 from ts4mp.debug.log import ts4mp_log
 from ts4mp.core.mp_utils import get_current_user_directory
 import services
+import sys
 try:
     # TODO: Implement a better way to test if user is a client/server
     is_client = False
@@ -32,6 +33,6 @@ try:
             server_instance.kill()
         original()
 
-
+    sys.setcheckinterval(0.01)
 except Exception as e:
     ts4mp_log("errors", str(e))
