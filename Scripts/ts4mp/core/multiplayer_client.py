@@ -14,6 +14,7 @@ class Client:
         self.serversocket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.host = HOST
         self.port = PORT
+        self.alive = True
         # self.host = "192.168.1.23"
         # self.port = 9999
         self.connected = False
@@ -28,7 +29,7 @@ class Client:
         self.serversocket.connect((self.host, self.port))
         self.connected = True
 
-        while True:
+        while self.alive:
             ts4mp_log("locks", "acquiring outgoing lock")
 
             with outgoing_lock:
@@ -45,9 +46,12 @@ class Client:
         size = None
         data = b''
 
-        while True:
+        while self.alive:
             if self.connected:
                 # TODO: Is this supposed to override the global variable? It's really unclear
                 ts4mp.core.mp_essential.incoming_commands, data, size = generic_listen_loop(serversocket, ts4mp.core.mp_essential.incoming_commands, data, size)
 
             # time.sleep(1)
+
+    def kill(self):
+        self.alive = False

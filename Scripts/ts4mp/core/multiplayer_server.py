@@ -14,6 +14,7 @@ class Server:
         self.serversocket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.host = ""
         self.port = 9999
+        self.alive = True
         self.serversocket.bind((self.host, self.port))
         self.clientsocket = None
 
@@ -24,7 +25,7 @@ class Server:
         threading.Thread(target=self.send_loop, args=[]).start()
 
     def send_loop(self):
-        while True:
+        while self.alive:
             if self.clientsocket is not None:
                 ts4mp_log("locks", "acquiring outgoing lock")
 
@@ -47,8 +48,11 @@ class Server:
         size = None
         data = b''
 
-        while True:
+        while self.alive:
             # output_irregardelessly("network", "Server Listen Update")
-            # TODO: Is this supposed to override the global variable? It's really unclear
             ts4mp.core.mp_essential.incoming_commands, data, size = generic_listen_loop(clientsocket, ts4mp.core.mp_essential.incoming_commands, data, size)
             # time.sleep(1)
+
+    def kill(self):
+        self.alive = False
+
