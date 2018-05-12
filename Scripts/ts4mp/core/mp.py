@@ -33,6 +33,5 @@ try:
             server_instance.kill()
         original()
 
-    sys.setcheckinterval(0.01)
 except Exception as e:
     ts4mp_log("errors", str(e))
