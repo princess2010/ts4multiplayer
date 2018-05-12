@@ -9,8 +9,11 @@ from server_commands.sim_commands import set_active_sim
 from server_commands.ui_commands import ui_dialog_respond, ui_dialog_pick_result, ui_dialog_text_input
 from sims4 import core_services
 import game_services
+import time_service
+import time
+import ts4mp.core.mp_essential
 
-
+from time_service import logger
 from ts4mp.core.csn import mp_chat
 from ts4mp.utils.native.decorator import decorator
 from ts4mp.debug.log import ts4mp_log
@@ -136,11 +139,30 @@ def on_tick_server():
     server_sync()
 
 
+def update(self, time_slice=True):
+    if ts4mp.core.mp_essential.client_online:
+        # ts4mp_log("simulate", "Client is online?: {}".format(ts4mp.core.mp_essential.client_online), force=True)
+
+        return
+    max_time_ms = self.MAX_TIME_SLICE_MILLISECONDS if time_slice else None
+    t1 = time.time()
+    result = self.sim_timeline.simulate(services.game_clock_service().now(), max_time_ms=max_time_ms)
+    t2 = time.time()
+
+    # ts4mp_log("simulate", "{} ms".format((t2 - t1) * 1000), force=True)
+    if not result:
+        logger.debug('Did not finish processing Sim Timeline. Current element: {}', self.sim_timeline.heap[0])
+    result = self.wall_clock_timeline.simulate(services.server_clock_service().now())
+    if not result:
+        logger.error('Too many iterations processing wall-clock Timeline. Likely culprit: {}', self.wall_clock_timeline.heap[0])
+
+
+
 # TODO: Consider making a getter for the 'is_client' variable
 if is_client:
     server.client.Client.send_message = send_message_client
     core_services.on_tick = on_tick_client
-
+    time_service.TimeService.update = update
     for function_command_name, command_function in COMMAND_FUNCTIONS.items():
         sims4.commands.Command(function_command_name, command_type=sims4.commands.CommandType.Live)(wrapper_client(undecorated(command_function)))
 else:
