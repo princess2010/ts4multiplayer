@@ -2,13 +2,16 @@ import os
 
 from ts4mp.core.mp_utils import get_sims_documents_directory
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 
 def ts4mp_log(filename, string, force=False):
     global DEBUG_MODE
 
     if DEBUG_MODE is False and force is False:
+        return
+
+    if filename == "locks":
         return
 
     logs_directory = "{}ts4mp_logs/".format(get_sims_documents_directory())

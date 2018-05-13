@@ -140,6 +140,8 @@ def on_tick_server():
 
 
 def update(self, time_slice=True):
+    ts4mp_log("simulate", "Client is online?: {}".format(ts4mp.core.mp_essential.client_online), force=True)
+
     if ts4mp.core.mp_essential.client_online:
         # ts4mp_log("simulate", "Client is online?: {}".format(ts4mp.core.mp_essential.client_online), force=True)
 

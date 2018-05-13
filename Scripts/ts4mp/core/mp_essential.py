@@ -106,9 +106,13 @@ def client_sync():
             client = client_manager.get_first_client()
 
             if client is None:
+                client_online = False
                 return
-
+        else:
+            client_online = False
+            return
         client_online = True
+        ts4mp_log("simulate", "Sending {} commands.".format(len(incoming_commands)), force=True)
         for unpacked_msg_data in incoming_commands:
             if type(unpacked_msg_data) is Message:
                 omega.send(client.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
