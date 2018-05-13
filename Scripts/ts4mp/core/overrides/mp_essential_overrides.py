@@ -101,6 +101,8 @@ def on_tick_client():
     # If we don't have any client, that means we aren't in a zone yet.
     # If we do have at least one client, that means we are in a zone and can sync information.
     service_manager = game_services.service_manager
+    ts4mp.core.mp_essential.client_online = False
+
     if service_manager is None:
         return
 
@@ -113,6 +115,7 @@ def on_tick_client():
 
     if client is None:
         return
+    ts4mp.core.mp_essential.client_online = True
 
     client_sync()
 

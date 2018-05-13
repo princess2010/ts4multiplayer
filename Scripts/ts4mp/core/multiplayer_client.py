@@ -6,6 +6,7 @@ from ts4mp.debug.log import ts4mp_log
 from ts4mp.core.mp_essential import outgoing_lock, outgoing_commands
 from ts4mp.core.networking import generic_send_loop, generic_listen_loop
 from ts4mp.configs.server_config import HOST, PORT
+from ts4mp.core.mp_essential import incoming_lock
 
 
 class Client:
@@ -48,9 +49,10 @@ class Client:
 
         while self.alive:
             if self.connected:
-                # TODO: Is this supposed to override the global variable? It's really unclear
-                ts4mp.core.mp_essential.incoming_commands, data, size = generic_listen_loop(serversocket, ts4mp.core.mp_essential.incoming_commands, data, size)
-
+                new_command, data, size = generic_listen_loop(serversocket, data, size)
+                if new_command is not None:
+                    with incoming_lock:
+                        ts4mp.core.mp_essential.incoming_commands.append(new_command)
             # time.sleep(1)
 
     def kill(self):

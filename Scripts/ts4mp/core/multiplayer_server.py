@@ -4,7 +4,7 @@ import threading
 import ts4mp
 from ts4mp.debug.log import ts4mp_log
 from ts4mp.core.mp_essential import outgoing_lock, outgoing_commands
-
+from ts4mp.core.mp_essential import incoming_lock
 from ts4mp.core.networking import generic_send_loop, generic_listen_loop
 
 
@@ -49,9 +49,10 @@ class Server:
         data = b''
 
         while self.alive:
-            # output_irregardelessly("network", "Server Listen Update")
-            ts4mp.core.mp_essential.incoming_commands, data, size = generic_listen_loop(clientsocket, ts4mp.core.mp_essential.incoming_commands, data, size)
-            # time.sleep(1)
+            new_command, data, size = generic_listen_loop(clientsocket, data, size)
+            if new_command is not None:
+                with incoming_lock:
+                    ts4mp.core.mp_essential.incoming_commands.append(new_command)
 
     def kill(self):
         self.alive = False

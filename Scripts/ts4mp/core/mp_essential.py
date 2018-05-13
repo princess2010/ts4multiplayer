@@ -91,13 +91,11 @@ def get_file_matching_name(name):
 
 # TODO: Any kind of documentation for any of this so it's easier to understand in a year?
 def client_sync():
-    global client_online
     ts4mp_log("locks", "acquiring incoming lock 1")
+    ts4mp_log("simulate", "Syncing client.")
 
     with incoming_lock:
         global incoming_commands
-
-        ts4mp_log("receive", "{} \n".format(len(incoming_commands)))
 
         client_manager = services.client_manager()
         client = None
@@ -106,12 +104,9 @@ def client_sync():
             client = client_manager.get_first_client()
 
             if client is None:
-                client_online = False
                 return
         else:
-            client_online = False
             return
-        client_online = True
         ts4mp_log("simulate", "Sending {} commands.".format(len(incoming_commands)), force=True)
         for unpacked_msg_data in incoming_commands:
             if type(unpacked_msg_data) is Message:
