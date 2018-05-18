@@ -49,15 +49,20 @@ class Client:
                         for data in outgoing_commands:
                             generic_send_loop(data, self.serversocket)
                             outgoing_commands.remove(data)
+                    ts4mp_log("locks", "releasing outgoing lock")
+
                 except OSError as e:
+                    ts4mp_log("locks", "acquiring incoming and outgoing lock")
+
                     with outgoing_lock:
                         with incoming_lock:
                             self.__init__()
+                    ts4mp_log("locks", "releasing incoming and outgoing lock")
+
                     ts4mp_log("network", "Network disconnect")
 
                     break
 
-            ts4mp_log("locks", "releasing outgoing lock")
             # time.sleep(1)
 
     def listen_loop(self):

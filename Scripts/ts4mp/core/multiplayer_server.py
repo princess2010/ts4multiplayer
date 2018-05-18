@@ -43,9 +43,11 @@ class Server:
 
                         ts4mp_log("locks", "releasing outgoing lock for send")
                     except OSError as e:
+                        ts4mp_log("locks", "acquiring incoming and outgoing lock")
                         with outgoing_lock:
                             with incoming_lock:
                                 self.__init__()
+                        ts4mp_log("locks", "releasing incoming and outgoing lock")
                         ts4mp_log("network", "Network disconnect")
             ts4mp_log("locks", "releasing socket lock")
 
@@ -82,9 +84,11 @@ class Server:
                         ts4mp_log("locks", "releasing incoming lock")
 
                 except OSError as e:
+                    ts4mp_log("locks", "acquiring incoming and outgoing lock")
                     with outgoing_lock:
                         with incoming_lock:
                             self.__init__()
+                    ts4mp_log("locks", "releasing incoming and outgoing lock")
                     ts4mp_log("network", "Network disconnect")
 
                     break
