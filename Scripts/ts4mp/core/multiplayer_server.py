@@ -27,33 +27,44 @@ class Server:
     def send_loop(self):
         while self.alive:
             if self.clientsocket is not None:
-                ts4mp_log("locks", "acquiring outgoing lock")
+                try:
+                    ts4mp_log("locks", "acquiring outgoing lock")
 
-                with outgoing_lock:
-                    for data in outgoing_commands:
-                        generic_send_loop(data, self.clientsocket)
-                        outgoing_commands.remove(data)
+                    with outgoing_lock:
+                        for data in outgoing_commands:
+                            generic_send_loop(data, self.clientsocket)
+                            outgoing_commands.remove(data)
 
-                ts4mp_log("locks", "releasing outgoing lock")
+                    ts4mp_log("locks", "releasing outgoing lock")
+                except OSError as e:
+                    with outgoing_lock:
+                        with incoming_lock:
+                            self.__init__()
 
             # time.sleep(1)
 
     def listen_loop(self):
-        self.serversocket.listen(5)
-        self.clientsocket, address = self.serversocket.accept()
-
-        ts4mp_log("network", "Client Connect")
-
-        clientsocket = self.clientsocket
-        size = None
-        data = b''
-
         while self.alive:
-            new_command, data, size = generic_listen_loop(clientsocket, data, size)
-            if new_command is not None:
-                with incoming_lock:
-                    ts4mp.core.mp_essential.incoming_commands.append(new_command)
+            self.serversocket.listen(5)
+            self.clientsocket, address = self.serversocket.accept()
 
+            ts4mp_log("network", "Client Connect", force=True)
+
+            clientsocket = self.clientsocket
+            size = None
+            data = b''
+
+            while True:
+                try:
+                    new_command, data, size = generic_listen_loop(clientsocket, data, size)
+                    if new_command is not None:
+                        with incoming_lock:
+                            ts4mp.core.mp_essential.incoming_commands.append(new_command)
+                except OSError as e:
+                    with outgoing_lock:
+                        with incoming_lock:
+                            self.__init__()
+                    break
     def kill(self):
         self.alive = False
 

@@ -5,8 +5,13 @@ import persistence_module
 import services
 import sims4.commands
 from protocolbuffers.FileSerialization_pb2 import ZoneObjectData
+from protocolbuffers.Sims_pb2 import UpdateClientSim
 from server.account import Account
 from world.travel_service import travel_sim_to_zone
+from distributor.ops import GenericProtocolBufferOp
+from distributor.system import Distributor
+import protocolbuffers.Consts_pb2
+import protocolbuffers.DistributorOps_pb2 as ops_pb2
 
 from ts4mp.debug.log import ts4mp_log
 from ts4mp.core.mp_essential import outgoing_commands, outgoing_lock, File, get_file_matching_name
@@ -98,14 +103,17 @@ def load_zone(_connection=None):
         (file_path, _) = get_file_matching_name(name)
         zone_objects_message = open(file_path, "rb").read()
 
-        ts4mp_log("msg", dir(zone_objects_pb))
+        ts4mp_log("msg", dir(zone_objects_pb), force = True)
 
         zone_objects_pb.ParseFromString(zone_objects_message)
 
-        ts4mp_log("msg", zone_objects_pb)
-        ts4mp_log("msg", zone_objects_message)
+        ts4mp_log("msg", zone_objects_pb, force = True)
+        ts4mp_log("msg", zone_objects_message, force = True)
 
+        persistence_module.run_persistence_operation(persistence_module.PersistenceOpType.kPersistenceOpLoad, zone_objects_pb, 0, None)
         persistence_module.run_persistence_operation(persistence_module.PersistenceOpType.kPersistenceOpLoadZoneObjects, zone_objects_pb, 0, None)
+        persistence_module.run_persistence_operation(persistence_module.PersistenceOpType.kPersistenceOpLoadGameplayGlobalData, zone_objects_pb, 0, None)
+
     except Exception as e:
         ts4mp_log("er", e)
 
@@ -152,3 +160,14 @@ def change_persona(_connection=None):
 
     client._account._persona_name = "Corrin"
     output(client._account._persona_name)
+
+    
+@sims4.commands.Command('plum_color', command_type=sims4.commands.CommandType.Live)
+def change_plumbbob_color(_connection=None):
+    output = sims4.commands.CheatOutput(_connection)
+    client = services.client_manager().get_first_client()
+    active_sim = services.get_active_sim()
+    client._set_active_sim_without_field_distribution(client._selectable_sims[0])
+    
+    except Exception as e:
+        ts4mp_log("plummy", str(e), force = True)

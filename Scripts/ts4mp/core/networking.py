@@ -4,6 +4,7 @@ from struct import unpack, pack
 
 from ts4mp.debug.log import ts4mp_log
 
+import struct
 
 def generic_send_loop(data, socket):
     data = pickle.dumps(data)
@@ -18,8 +19,13 @@ def generic_listen_loop(socket, data, size):
     # ts4mp_log_debug("receive", "{}, {} \n".format(size, sys.getsizeof(data)))
     if size is None:
         size = socket.recv(8)
-        (size,) = unpack('>Q', size)
-        size = int(size)
+        try:
+            (size,) = unpack('>Q', size)
+            size = int(size)
+        except struct.error:
+            # not enough bytes received
+            size = None
+            data = b''
     elif size > sys.getsizeof(data):
         bytes_to_receive = size - sys.getsizeof(data)
         new_data = socket.recv(bytes_to_receive)

@@ -51,7 +51,7 @@ def on_add(self):
     # We override the on_add function of the clients so we can add the stand-in client at the same time. Only supports  one
     # multiplayer client at the moment, which has the id of 1000.
     if self.id != 1000:
-        account = server.account.Account(865431, "Hiya2527")
+        account = server.account.Account(865431, "Second Player")
         new_client = services.client_manager().create_client(1000, account, 0)
 
     for sim_info in self._selectable_sims:
