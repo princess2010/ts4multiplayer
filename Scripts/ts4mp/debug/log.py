@@ -11,8 +11,7 @@ def ts4mp_log(filename, string, force=False):
     if DEBUG_MODE is False and force is False:
         return
 
-    if filename == "locks":
-        return
+
 
     logs_directory = "{}ts4mp_logs/".format(get_sims_documents_directory())
 
