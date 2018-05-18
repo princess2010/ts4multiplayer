@@ -91,7 +91,7 @@ def get_file_matching_name(name):
 
 # TODO: Any kind of documentation for any of this so it's easier to understand in a year?
 def client_sync():
-    ts4mp_log("locks", "acquiring incoming lock 1")
+    ts4mp_log("locks", "acquiring incoming lock for sync")
     ts4mp_log("simulate", "Syncing client.")
 
     with incoming_lock:
@@ -122,11 +122,11 @@ def client_sync():
 
                 incoming_commands.remove(unpacked_msg_data)
 
-    ts4mp_log("locks", "releasing incoming lock")
+    ts4mp_log("locks", "releasing incoming lock from sync")
 
 
 def server_sync():
-    ts4mp_log("locks", "acquiring incoming lock 1")
+    ts4mp_log("locks", "acquiring incoming lock for sync")
 
     with incoming_lock:
         global incoming_commands
@@ -175,7 +175,7 @@ def server_sync():
 
             incoming_commands.remove(command)
 
-    ts4mp_log("locks", "releasing incoming lock")
+    ts4mp_log("locks", "releasing incoming lock from sync")
 
 
 def _parse_arg(arg):

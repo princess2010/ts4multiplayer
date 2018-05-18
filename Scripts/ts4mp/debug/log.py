@@ -1,7 +1,9 @@
 import os
 
 from ts4mp.core.mp_utils import get_sims_documents_directory
+from threading import Lock
 
+fileLock = Lock()
 DEBUG_MODE = True
 
 
@@ -18,5 +20,6 @@ def ts4mp_log(filename, string, force=False):
     if not os.path.exists(logs_directory):
         os.makedirs(logs_directory)
 
-    with open("{}{}.txt".format(logs_directory, filename), 'a') as stream:
-        stream.write(str(string) + "\n")
+    with fileLock:
+        with open("{}{}.txt".format(logs_directory, filename), 'a') as stream:
+            stream.write(str(string) + "\n")

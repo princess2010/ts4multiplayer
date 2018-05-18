@@ -30,8 +30,12 @@ class Client:
     def send_loop(self):
         while self.alive:
             try:
+                ts4mp_log("locks", "acquiring socket lock")
+
                 with socket_lock:
                     self.serversocket.connect((self.host, self.port))
+                ts4mp_log("locks", "releasing socket lock")
+
                 self.connected = True
             except:
                 # server isn't online

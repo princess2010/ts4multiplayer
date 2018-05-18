@@ -15,8 +15,11 @@ class Server:
         self.port = 9999
         self.alive = True
         self.serversocket.bind((self.host, self.port))
+        ts4mp_log("locks", "acquiring socket lock")
+
         with socket_lock:
             self.clientsocket = None
+        ts4mp_log("locks", "releasing socket lock")
 
     def listen(self):
         threading.Thread(target=self.listen_loop, args=[]).start()
@@ -26,6 +29,8 @@ class Server:
 
     def send_loop(self):
         while self.alive:
+            ts4mp_log("locks", "acquiring socket lock")
+
             with socket_lock:
                 if self.clientsocket is not None:
                     try:
@@ -42,6 +47,7 @@ class Server:
                             with incoming_lock:
                                 self.__init__()
                         ts4mp_log("network", "Network disconnect")
+            ts4mp_log("locks", "releasing socket lock")
 
             # time.sleep(1)
 
@@ -56,9 +62,11 @@ class Server:
             clientsocket, address = self.serversocket.accept()
 
             ts4mp_log("network", "Client Connect")
+            ts4mp_log("locks", "acquiring socket lock")
 
             with socket_lock:
                 self.clientsocket = clientsocket
+            ts4mp_log("locks", "releasing socket lock")
 
             size = None
             data = b''
