@@ -112,7 +112,7 @@ def client_sync():
             if type(unpacked_msg_data) is Message:
                 omega.send(client.id, unpacked_msg_data.msg_id, unpacked_msg_data.msg)
                 incoming_commands.remove(unpacked_msg_data)
-            elif type(unpacked_msg_data) is File:h
+            elif type(unpacked_msg_data) is File:
                 (file_path, _) = get_file_matching_name(unpacked_msg_data.file_name)
                 client_file = open(file_path, "wb")
                 new_architecture_data = unpacked_msg_data.file_contents
