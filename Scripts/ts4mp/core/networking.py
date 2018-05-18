@@ -4,7 +4,12 @@ from struct import unpack, pack
 
 from ts4mp.debug.log import ts4mp_log
 
+from threading import Lock
+
+
 import struct
+
+socket_lock = Lock()
 
 def generic_send_loop(data, socket):
     data = pickle.dumps(data)

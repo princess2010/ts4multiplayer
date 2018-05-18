@@ -4,15 +4,16 @@ import threading
 import ts4mp
 from ts4mp.debug.log import ts4mp_log
 from ts4mp.core.mp_essential import outgoing_lock, outgoing_commands
-from ts4mp.core.networking import generic_send_loop, generic_listen_loop
+from ts4mp.core.networking import generic_send_loop, generic_listen_loop, socket_lock
 from ts4mp.configs.server_config import HOST, PORT
 from ts4mp.core.mp_essential import incoming_lock
 
 
 class Client:
     def __init__(self):
-        self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.serversocket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        with socket_lock:
+            self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.serversocket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.host = HOST
         self.port = PORT
         self.alive = True
@@ -29,7 +30,8 @@ class Client:
     def send_loop(self):
         while self.alive:
             try:
-                self.serversocket.connect((self.host, self.port))
+                with socket_lock:
+                    self.serversocket.connect((self.host, self.port))
                 self.connected = True
             except:
                 # server isn't online
