@@ -9,10 +9,11 @@ import struct
 def generic_send_loop(data, socket):
     data = pickle.dumps(data)
     length = pack('>Q', sys.getsizeof(data))
+    ts4mp_log("network", "Attempting to send a message")
 
     socket.sendall(length)
     socket.sendall(data)
-
+    ts4mp_log("network", "Sent a message with length of {} bytes".format(length))
 
 def generic_listen_loop(socket, data, size):
     new_command = None
@@ -35,11 +36,9 @@ def generic_listen_loop(socket, data, size):
     elif size == sys.getsizeof(data):
         data = pickle.loads(data)
 
-        ts4mp_log("locks", "acquiring incoming lock")
 
         new_command = data
 
-        ts4mp_log("locks", "releasing incoming lock")
 
         size = None
         data = b''

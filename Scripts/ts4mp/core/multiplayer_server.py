@@ -28,14 +28,14 @@ class Server:
         while self.alive:
             if self.clientsocket is not None:
                 try:
-                    ts4mp_log("locks", "acquiring outgoing lock")
+                    ts4mp_log("locks", "acquiring outgoing lock for send")
 
                     with outgoing_lock:
                         for data in outgoing_commands:
                             generic_send_loop(data, self.clientsocket)
                             outgoing_commands.remove(data)
 
-                    ts4mp_log("locks", "releasing outgoing lock")
+                    ts4mp_log("locks", "releasing outgoing lock for send")
                 except OSError as e:
                     with outgoing_lock:
                         with incoming_lock:
@@ -59,12 +59,16 @@ class Server:
             size = None
             data = b''
 
-            while True:
+            while self.alive:
                 try:
                     new_command, data, size = generic_listen_loop(clientsocket, data, size)
                     if new_command is not None:
+                        ts4mp_log("locks", "acquiring incoming lock")
+
                         with incoming_lock:
                             ts4mp.core.mp_essential.incoming_commands.append(new_command)
+                        ts4mp_log("locks", "releasing incoming lock")
+
                 except OSError as e:
                     with outgoing_lock:
                         with incoming_lock:
