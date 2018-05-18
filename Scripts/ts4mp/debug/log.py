@@ -2,7 +2,7 @@ import os
 
 from ts4mp.core.mp_utils import get_sims_documents_directory
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 
 def ts4mp_log(filename, string, force=False):

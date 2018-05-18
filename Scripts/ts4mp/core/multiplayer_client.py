@@ -47,6 +47,8 @@ class Client:
                     with outgoing_lock:
                         with incoming_lock:
                             self.__init__()
+                    ts4mp_log("network", "Network disconnect")
+
                     break
 
             ts4mp_log("locks", "releasing outgoing lock")
@@ -71,6 +73,8 @@ class Client:
                     with outgoing_lock:
                         with incoming_lock:
                             self.__init__()
+                    ts4mp_log("network", "Network disconnect")
+
                     break
 
     def kill(self):

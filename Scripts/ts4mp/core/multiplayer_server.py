@@ -40,15 +40,20 @@ class Server:
                     with outgoing_lock:
                         with incoming_lock:
                             self.__init__()
+                    ts4mp_log("network", "Network disconnect")
 
             # time.sleep(1)
 
     def listen_loop(self):
         while self.alive:
+
+
+            ts4mp_log("network", "Listening for clients")
+
             self.serversocket.listen(5)
             self.clientsocket, address = self.serversocket.accept()
 
-            ts4mp_log("network", "Client Connect", force=True)
+            ts4mp_log("network", "Client Connect")
 
             clientsocket = self.clientsocket
             size = None
@@ -64,6 +69,8 @@ class Server:
                     with outgoing_lock:
                         with incoming_lock:
                             self.__init__()
+                    ts4mp_log("network", "Network disconnect")
+
                     break
     def kill(self):
         self.alive = False
