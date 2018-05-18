@@ -27,6 +27,7 @@ def generic_listen_loop(socket, data, size):
             size = None
             data = b''
             ts4mp_log("network", "Not enough bytes received")
+            raise OSError()
     elif size > sys.getsizeof(data):
         bytes_to_receive = size - sys.getsizeof(data)
         new_data = socket.recv(bytes_to_receive)
