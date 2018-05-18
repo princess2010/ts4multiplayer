@@ -162,12 +162,3 @@ def change_persona(_connection=None):
     output(client._account._persona_name)
 
     
-@sims4.commands.Command('plum_color', command_type=sims4.commands.CommandType.Live)
-def change_plumbbob_color(_connection=None):
-    output = sims4.commands.CheatOutput(_connection)
-    client = services.client_manager().get_first_client()
-    active_sim = services.get_active_sim()
-    client._set_active_sim_without_field_distribution(client._selectable_sims[0])
-    
-    except Exception as e:
-        ts4mp_log("plummy", str(e), force = True)
